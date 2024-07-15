@@ -1,4 +1,4 @@
-const Ship = require("../src/app");
+const Ship = require("../src/factories/shipFactory");
 
 describe("Ship Class", () => {
   let ship;
