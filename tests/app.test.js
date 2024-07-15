@@ -32,7 +32,7 @@ describe("Ship Class", () => {
     expect(typeof ship.isSunk).toBe("function");
   });
 
-  it("should call the hit method to increment hits", () => {
+  it("should call the hit() method to increment hits", () => {
     ship.hit();
     ship.hit();
     expect(ship.hits).toBe(2);
@@ -41,18 +41,16 @@ describe("Ship Class", () => {
   it("should call the isSunk() method to check if ship has not sunk", () => {
     ship.hit();
     ship.hit();
-    expect(ship.isSunk()).toBe(false);
+    ship.isSunk();
+    expect(ship.sunk).toBe(false);
   });
 
   it("should call the isSunk() method to check if ship has already sunk", () => {
     ship.hit();
     ship.hit();
-    expect(ship.isSunk()).toBe(true);
-  });
-
-  it("should call the isSunk() method to update the sunk property", () => {
     ship.hit();
-    ship.hit();
+    ship.isSunk();
     expect(ship.sunk).toBe(true);
   });
 });
+
