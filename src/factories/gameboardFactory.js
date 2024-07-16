@@ -4,7 +4,7 @@ class Gameboard {
   constructor(height, length) {
     this.height = height;
     this.length = length;
-    this.coordinates;
+    this.coordinates = this.resetBoard(height, length);
   }
 
   resetBoard() {
@@ -43,14 +43,12 @@ class Gameboard {
     const xLoc = location[1];
 
     if (rotation === "horizontal") {
-      if (xLoc + length > this.length) return false;
       for (let x = xLoc; x < xLoc + length; x++) {
         if (this.coordinates[yLoc]?.[x]?.hasShip !== null) return false;
       }
     }
 
     if (rotation === "vertical") {
-      if (yLoc + length > this.height) return false;
       for (let y = yLoc; y < yLoc + length; y++) {
         if (this.coordinates[y]?.[xLoc]?.hasShip !== null) return false;
       }
