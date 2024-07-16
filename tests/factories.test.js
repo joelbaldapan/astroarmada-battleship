@@ -59,8 +59,8 @@ describe("Ship Class", () => {
 describe("Gameboard Class", () => {
   let board;
   beforeEach(() => {
-    board = new Gameboard(3, 3);
-    board.resetBoard();
+    board = new Gameboard();
+    board.resetBoard(3, 3);
   });
 
   it("should create intialize a gameboard with isShip and isHit properties", () => {
@@ -152,9 +152,12 @@ describe("Player Class", () => {
     expect(computer.type).toBe("computer");
   });
 
-  it("should have it's own gameboard", () => {
-    const player = new Player("human", 2, 2);
-    const gameboardCopy = new Gameboard(2, 2);
+  it("should have its own gameboard", () => {
+    const player = new Player("human");
+    player.gameboard.resetBoard(2, 2);
+
+    const gameboardCopy = new Gameboard();
+    gameboardCopy.resetBoard(2, 2);
 
     expect(player.gameboard).toEqual(gameboardCopy);
   });

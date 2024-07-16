@@ -1,17 +1,15 @@
 const Ship = require("./shipFactory");
 
 class Gameboard {
-  constructor(height, length) {
-    this.height = height;
-    this.length = length;
-    this.coordinates = this.resetBoard(height, length);
+  constructor() {
+    this.coordinates;
   }
 
-  resetBoard() {
+  resetBoard(height, length) {
     this.coordinates = [];
-    for (let h = 0; h < this.height; h++) {
+    for (let h = 0; h < height; h++) {
       this.coordinates.push([]);
-      for (let l = 0; l < this.length; l++) {
+      for (let l = 0; l < length; l++) {
         this.coordinates[h].push({ hasHit: false, hasShip: null });
       }
     }

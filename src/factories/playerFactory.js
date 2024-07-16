@@ -1,9 +1,9 @@
 const Gameboard = require("./gameboardFactory");
 
 class Player {
-  constructor(type, boardHeight, boardLength) {
+  constructor(type) {
     this.type = type
-    this.gameboard = new Gameboard(boardHeight, boardLength)
+    this.gameboard = new Gameboard()
   }
 }
 
