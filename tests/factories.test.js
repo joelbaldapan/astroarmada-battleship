@@ -1,5 +1,6 @@
 const Ship = require("../src/factories/shipFactory");
 const Gameboard = require("../src/factories/gameboardFactory");
+const Player = require("../src/factories/playerFactory");
 
 describe("Ship Class", () => {
   let ship;
@@ -55,7 +56,7 @@ describe("Ship Class", () => {
   });
 });
 
-describe("Gameboard", () => {
+describe("Gameboard Class", () => {
   let board;
   beforeEach(() => {
     board = new Gameboard(3, 3);
@@ -139,5 +140,22 @@ describe("Gameboard", () => {
     board.receiveAttack(1, 2);
 
     expect(board.checkFinish()).toBe(true);
+  });
+});
+
+describe("Player Class", () => {
+  it("should have two types of players: human and computer", () => {
+    const human = new Player("human");
+    const computer = new Player("computer");
+
+    expect(human.type).toBe("human");
+    expect(computer.type).toBe("computer");
+  });
+
+  it("should have it's own gameboard", () => {
+    const player = new Player("human", 2, 2);
+    const gameboardCopy = new Gameboard(2, 2);
+
+    expect(player.gameboard).toEqual(gameboardCopy);
   });
 });
