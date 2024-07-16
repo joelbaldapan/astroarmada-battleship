@@ -1,4 +1,4 @@
-import Gameboard from "./gameboardFactory";
+import Gameboard from "./gameboardFactory.js";
 
 class Player {
   constructor(type) {

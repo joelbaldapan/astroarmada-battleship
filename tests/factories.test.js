@@ -1,6 +1,6 @@
-import Ship from "../src/factories/shipFactory";
-import Gameboard from "../src/factories/gameboardFactory";
-import Player from "../src/factories/playerFactory";
+import Ship from "../src/factories/shipFactory.js";
+import Gameboard from "../src/factories/gameboardFactory.js";
+import Player from "../src/factories/playerFactory.js";
 
 describe("Ship Class", () => {
   let ship;

@@ -1,4 +1,9 @@
-import Player from "./factories/playerFactory";
+import Player from "./factories/playerFactory.js";
 
-const player = new Player("player");
+const human = new Player("human");
 const computer = new Player("computer");
+
+human.gameboard.resetBoard(10, 10);
+computer.gameboard.resetBoard(10, 10);
+
+console.log(human.gameboard.coordinates);
