@@ -1,6 +1,6 @@
-const Ship = require("../src/factories/shipFactory");
-const Gameboard = require("../src/factories/gameboardFactory");
-const Player = require("../src/factories/playerFactory");
+import Ship from "../src/factories/shipFactory";
+import Gameboard from "../src/factories/gameboardFactory";
+import Player from "../src/factories/playerFactory";
 
 describe("Ship Class", () => {
   let ship;
