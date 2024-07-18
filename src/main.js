@@ -19,16 +19,15 @@ class GameController {
     this.computer.gameboard.resetBoard(height, length);
   }
 
-  attack(board) {
-    let player;
-    if (board === "human") player = this.human;
-    else player = this.computer;
-
-    player.gameboard.placeShip([0, 1], 2, "horizontal");
-    player.gameboard.receiveAttack(0, 1); //temp
-    player.gameboard.receiveAttack(4, 3); //temp
-    player.gameboard.receiveAttack(9, 5); //temp
+  temporaryInitialize() {
+    // FOR DEBUGGING CODE PURPOSES
+    this.computer.gameboard.placeShip([0, 1], 2, "horizontal"); //temp
+    this.computer.gameboard.receiveAttack(0, 1); //temp
+    this.computer.gameboard.receiveAttack(4, 3); //temp
+    this.computer.gameboard.receiveAttack(9, 5); //temp
   }
+
+  attackComputer() {}
 }
 
 class EventController {
@@ -55,6 +54,10 @@ class EventController {
     this.renderBtn.addEventListener("click", () => {
       this.renderController.renderBoard("human");
       this.renderController.renderBoard("computer");
+
+      this.gameController.restartGame(10, 10);
+      this.gameController.temporaryInitialize(); // TEMPORARY
+      this.renderController.updateBoard();
     });
 
     this.updateBtn.addEventListener("click", () => {
@@ -62,7 +65,7 @@ class EventController {
     });
 
     this.attackBtn.addEventListener("click", () => {
-      this.gameController.attack("computer");
+      this.gameController.attackComputer();
       this.renderController.updateBoard();
     });
   }
@@ -78,7 +81,9 @@ class RenderController {
 
     Array.from(gameboards).forEach((board) => {
       let player;
-      if (board.id === "human") {
+      let boardId = board.id;
+
+      if (boardId === "human") {
         player = this.gameController.getHumanPlayer();
       } else {
         player = this.gameController.getComputerPlayer();
@@ -87,21 +92,23 @@ class RenderController {
       let cellIndex = 0;
       player.gameboard.coordinates.forEach((row) => {
         row.forEach((cell) => {
-          this.checkUpdateCell(cell, cellIndex);
+          this.checkUpdateCell(cell, cellIndex, boardId);
           cellIndex++;
         });
       });
     });
   }
 
-  checkUpdateCell(cell, cellIndex) {
+  checkUpdateCell(cell, cellIndex, boardId) {
     if (cell.hasHit) {
       const imgElement = document.createElement("img");
       imgElement.src = "/src/assets/images/gameboard/hit.png";
       if (cell.hasShip)
         imgElement.src = "/src/assets/images/gameboard/hit-and-ship.png";
 
-      const targetCell = document.getElementById(`cell-${cellIndex}`);
+      const targetCell = document.querySelector(
+        `#${boardId} #cell-${cellIndex}`
+      );
       targetCell.innerHTML = ""; // Remove all children
       targetCell.appendChild(imgElement);
     }
