@@ -21,34 +21,37 @@ class GameController {
 
   temporaryInitialize() {
     // FOR DEBUGGING CODE PURPOSES TEMPORARY
-    this.computer.gameboard.placeShip([0, 1], 3, "horizontal"); //temp
-    this.computer.gameboard.placeShip([1, 3], 5, "vertical"); //temp
+    this.computer.gameboard.placeShip([0, 1], 2, "horizontal"); //temp
+    this.computer.gameboard.placeShip([2, 3], 3, "vertical"); //temp
     this.computer.gameboard.placeShip([6, 2], 5, "horizontal"); //temp
     this.computer.gameboard.placeShip([2, 8], 3, "vertical"); //temp
-
-    this.computer.gameboard.receiveAttack(0, 1); //temp
-    this.computer.gameboard.receiveAttack(4, 3); //temp
-    this.computer.gameboard.receiveAttack(9, 5); //temp
+    this.computer.gameboard.placeShip([8, 4], 4, "horizontal"); //temp
   }
 
-  attackComputer() {}
+  attackComputer(verticalLoc, horizontalLoc) {
+    this.computer.gameboard.receiveAttack(verticalLoc, horizontalLoc);
+  }
 }
 
 class EventController {
-  constructor() {
+  constructor(height, length) {
+    this.height = height;
+    this.length = length;
     this.restartBtn = document.getElementById("restart-btn");
     this.consoleBtn = document.getElementById("console-btn");
     this.renderBtn = document.getElementById("render-btn");
     this.updateBtn = document.getElementById("update-btn");
     this.attackBtn = document.getElementById("attack-btn");
 
-    // Add GameController and RenderController
     this.gameController = new GameController();
     this.renderController = new RenderController(this.gameController);
 
-    // Event listeners
+    this.setupEventListeners();
+  }
+
+  setupEventListeners() {
     this.restartBtn.addEventListener("click", () => {
-      this.gameController.restartGame(10, 10); // Adjustable height, length
+      this.gameController.restartGame(this.height, this.length);
     });
 
     this.consoleBtn.addEventListener("click", () => {
@@ -58,10 +61,15 @@ class EventController {
     this.renderBtn.addEventListener("click", () => {
       this.renderController.renderBoard("human");
       this.renderController.renderBoard("computer");
+      this.computerCells = document.querySelectorAll("#computer-board .cell");
+      this.computerCellsArr = [...this.computerCells];
 
-      this.gameController.restartGame(10, 10);
+      this.gameController.restartGame(this.height, this.length);
       this.gameController.temporaryInitialize(); // TEMPORARY
       this.renderController.updateBoard();
+
+      // Set up computer cell listeners after getting computerCells array
+      this.setupComputerCellListeners();
     });
 
     this.updateBtn.addEventListener("click", () => {
@@ -71,6 +79,18 @@ class EventController {
     this.attackBtn.addEventListener("click", () => {
       this.gameController.attackComputer();
       this.renderController.updateBoard();
+    });
+  }
+
+  setupComputerCellListeners() {
+    this.computerCellsArr.forEach((cell) => {
+      cell.addEventListener("click", () => {
+        const cellIndex = parseInt(cell.id.substring(5));
+        const verticalLoc = Math.floor(cellIndex / this.length);
+        const horizontalLoc = cellIndex % this.length;
+        this.gameController.attackComputer(verticalLoc, horizontalLoc);
+        this.renderController.updateBoard();
+      });
     });
   }
 }
@@ -87,7 +107,7 @@ class RenderController {
       let player;
       let boardId = board.id;
 
-      if (boardId === "human") {
+      if (boardId === "human-board") {
         player = this.gameController.getHumanPlayer();
       } else {
         player = this.gameController.getComputerPlayer();
@@ -114,6 +134,7 @@ class RenderController {
         `#${boardId} #cell-${cellIndex}`
       );
       targetCell.innerHTML = ""; // Remove all children
+      targetCell.classList.add("has-hit");
       targetCell.appendChild(imgElement);
     }
     if (cell.hasShip) {
@@ -129,7 +150,7 @@ class RenderController {
     const gameboardContainer = document.getElementById("gameboard-container");
     const gameboard = document.createElement("div");
     gameboard.className = "gameboard";
-    gameboard.id = player;
+    gameboard.id = `${player}-board`;
 
     // Cells
     const height = 10; // Adjustable height, length
@@ -156,4 +177,4 @@ class RenderController {
   }
 }
 
-const eventController = new EventController();
+const eventController = new EventController(10, 10);

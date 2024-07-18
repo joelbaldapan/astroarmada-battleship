@@ -64,6 +64,14 @@ body {
   /* temporary */
 }
 
+#computer-board {
+  cursor: pointer;
+}
+
+#computer-board .has-hit {
+  cursor: not-allowed;
+}
+
 #gameboard-container {
   display: flex;
   flex-direction: row;
