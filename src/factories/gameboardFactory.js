@@ -54,6 +54,11 @@ class Gameboard {
     return true;
   }
 
+  validAttack(vertical, horizontal) {
+    if (this.coordinates[vertical][horizontal].hasHit) return false;
+    return true;
+  }
+
   receiveAttack(vertical, horizontal) {
     const cell = this.coordinates[vertical][horizontal];
     if (cell.hasHit) return;

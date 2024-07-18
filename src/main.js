@@ -1,9 +1,11 @@
 import Player from "./factories/playerFactory.js";
 
 class GameController {
-  constructor() {
-    this.human = new Player("human");
-    this.computer = new Player("computer");
+  constructor(height, length) {
+    this.height = height;
+    this.length = length;
+    this.human = new Player("human", this);
+    this.computer = new Player("computer", this);
   }
 
   getHumanPlayer() {
@@ -14,9 +16,9 @@ class GameController {
     return this.computer;
   }
 
-  restartGame(height, length) {
-    this.human.gameboard.resetBoard(height, length);
-    this.computer.gameboard.resetBoard(height, length);
+  restartGame() {
+    this.human.gameboard.resetBoard(this.height, this.length);
+    this.computer.gameboard.resetBoard(this.height, this.length);
   }
 
   temporaryInitialize() {
@@ -26,10 +28,25 @@ class GameController {
     this.computer.gameboard.placeShip([6, 2], 5, "horizontal"); //temp
     this.computer.gameboard.placeShip([2, 8], 3, "vertical"); //temp
     this.computer.gameboard.placeShip([8, 4], 4, "horizontal"); //temp
+
+    this.human.gameboard.placeShip([2, 1], 2, "vertical"); //temp
+    this.human.gameboard.placeShip([3, 5], 3, "vertical"); //temp
+    this.human.gameboard.placeShip([7, 0], 5, "horizontal"); //temp
+    this.human.gameboard.placeShip([4, 8], 4, "vertical"); //temp
+    this.human.gameboard.placeShip([9, 4], 3, "horizontal"); //temp
   }
 
   attackComputer(verticalLoc, horizontalLoc) {
+    if (!this.computer.gameboard.validAttack(verticalLoc, horizontalLoc))
+      return;
     this.computer.gameboard.receiveAttack(verticalLoc, horizontalLoc);
+    this.attackPlayer();
+  }
+
+  attackPlayer() {
+    // Random AI
+    const compDecision = this.computer.decideAI("easy");
+    this.human.gameboard.receiveAttack(compDecision[0], compDecision[1]);
   }
 }
 
@@ -43,7 +60,7 @@ class EventController {
     this.updateBtn = document.getElementById("update-btn");
     this.attackBtn = document.getElementById("attack-btn");
 
-    this.gameController = new GameController();
+    this.gameController = new GameController(height, length);
     this.renderController = new RenderController(this.gameController);
 
     this.setupEventListeners();
@@ -51,7 +68,7 @@ class EventController {
 
   setupEventListeners() {
     this.restartBtn.addEventListener("click", () => {
-      this.gameController.restartGame(this.height, this.length);
+      this.gameController.restartGame();
     });
 
     this.consoleBtn.addEventListener("click", () => {
