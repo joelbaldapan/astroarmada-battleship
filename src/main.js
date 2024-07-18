@@ -27,7 +27,7 @@ class GameController {
     player.gameboard.placeShip([0, 1], 2, "horizontal");
     player.gameboard.receiveAttack(0, 1); //temp
     player.gameboard.receiveAttack(4, 3); //temp
-    player.gameboard.receiveAttack(10, 3); //temp
+    player.gameboard.receiveAttack(9, 5); //temp
   }
 }
 
@@ -63,7 +63,7 @@ class EventController {
 
     this.attackBtn.addEventListener("click", () => {
       this.gameController.attack("computer");
-      this.renderController.updateBoard("");
+      this.renderController.updateBoard();
     });
   }
 }

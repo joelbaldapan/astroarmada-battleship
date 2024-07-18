@@ -1,4 +1,15 @@
 :root {
+  --w-pri-dark: #3e10b3;
+  --w-pri-light: #5400fd;
+  --w-sec: #da3fa9;
+  --w-accent: #d5cc17;
+  --w-background: #040115;
+
+  --board-background: #080227;
+  --board-outline: #d2d0da32;
+
+  --w-text: #cddbec;
+
   --font-main: "Helvetica", serif;
   --font-w-main: "Zilla Slab", serif;
 }
@@ -26,19 +37,19 @@ body {
 }
 
 .gameboard {
-  background-color: black;
+  background-color: var(--board-outline);
   width: 40vw;
   height: 40vw;
 
   display: grid;
   grid-gap: 0.25vw;
-  border: 0.2vw solid black;
+  border: 0.2vw solid var(--board-outline);
 }
 
 .cell {
   width: 100%;
   height: 100%;
-  background-color: rgb(103, 121, 201);
+  background-color: var(--board-background);
 
   display: flex;
   justify-content: center;
@@ -48,6 +59,9 @@ body {
 .cell img {
   width: 90%;
   height: 90%;
+
+  filter: brightness(500);
+  /* temporary */
 }
 
 #gameboard-container {
@@ -63,7 +77,7 @@ body {
     width: 80vw;
     height: 80vw;
     grid-gap: 0.5vw;
-    border: 0.5vw solid black;
+    border: 0.5vw solid var(--board-outline);
   }
 
   #gameboard-container {
