@@ -23,14 +23,14 @@ class Gameboard {
 
     if (rotation === "horizontal") {
       if (!this.validPlacement(location, length, rotation)) return;
-      for (let x = xLoc; x < length; x++) {
+      for (let x = xLoc; x < xLoc + length; x++) {
         this.coordinates[yLoc][x].hasShip = ship;
       }
     }
 
     if (rotation === "vertical") {
       if (!this.validPlacement(location, length, rotation)) return;
-      for (let y = yLoc; y < length; y++) {
+      for (let y = yLoc; y < yLoc + length; y++) {
         this.coordinates[y][xLoc].hasShip = ship;
       }
     }

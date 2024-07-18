@@ -20,8 +20,12 @@ class GameController {
   }
 
   temporaryInitialize() {
-    // FOR DEBUGGING CODE PURPOSES
-    this.computer.gameboard.placeShip([0, 1], 2, "horizontal"); //temp
+    // FOR DEBUGGING CODE PURPOSES TEMPORARY
+    this.computer.gameboard.placeShip([0, 1], 3, "horizontal"); //temp
+    this.computer.gameboard.placeShip([1, 3], 5, "vertical"); //temp
+    this.computer.gameboard.placeShip([6, 2], 5, "horizontal"); //temp
+    this.computer.gameboard.placeShip([2, 8], 3, "vertical"); //temp
+
     this.computer.gameboard.receiveAttack(0, 1); //temp
     this.computer.gameboard.receiveAttack(4, 3); //temp
     this.computer.gameboard.receiveAttack(9, 5); //temp
@@ -112,6 +116,12 @@ class RenderController {
       targetCell.innerHTML = ""; // Remove all children
       targetCell.appendChild(imgElement);
     }
+    if (cell.hasShip) {
+      const targetCell = document.querySelector(
+        `#${boardId} #cell-${cellIndex}`
+      );
+      targetCell.style.backgroundColor = "gray";
+    } // TEMPORARY
   }
 
   renderBoard(player) {
