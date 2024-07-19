@@ -92,15 +92,6 @@ class EventController {
       // Set up computer cell listeners after getting computerCells array
       this.setupComputerCellListeners();
     });
-
-    this.updateBtn.addEventListener("click", () => {
-      this.renderController.updateBoard();
-    });
-
-    this.attackBtn.addEventListener("click", () => {
-      this.gameController.attackComputer();
-      this.renderController.updateBoard();
-    });
   }
 
   setupComputerCellListeners() {
