@@ -10,7 +10,11 @@ class Gameboard {
     for (let h = 0; h < height; h++) {
       this.coordinates.push([]);
       for (let l = 0; l < length; l++) {
-        this.coordinates[h].push({ hasHit: false, hasShip: null });
+        this.coordinates[h].push({
+          hasHit: false,
+          hasShip: null,
+          probability: 0,
+        });
       }
     }
   }

@@ -66,19 +66,19 @@ describe("Gameboard Class", () => {
   it("should create intialize a gameboard with isShip and isHit properties", () => {
     expect(board.coordinates).toEqual([
       [
-        { hasHit: false, hasShip: null },
-        { hasHit: false, hasShip: null },
-        { hasHit: false, hasShip: null },
+        { hasHit: false, hasShip: null, probability: 0 },
+        { hasHit: false, hasShip: null, probability: 0 },
+        { hasHit: false, hasShip: null, probability: 0 },
       ],
       [
-        { hasHit: false, hasShip: null },
-        { hasHit: false, hasShip: null },
-        { hasHit: false, hasShip: null },
+        { hasHit: false, hasShip: null, probability: 0 },
+        { hasHit: false, hasShip: null, probability: 0 },
+        { hasHit: false, hasShip: null, probability: 0 },
       ],
       [
-        { hasHit: false, hasShip: null },
-        { hasHit: false, hasShip: null },
-        { hasHit: false, hasShip: null },
+        { hasHit: false, hasShip: null, probability: 0 },
+        { hasHit: false, hasShip: null, probability: 0 },
+        { hasHit: false, hasShip: null, probability: 0 },
       ],
     ]);
   });

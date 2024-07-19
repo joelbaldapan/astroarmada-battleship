@@ -44,6 +44,10 @@ class Player {
     // Probability Map AI (EXTREME) -- Calculate proba map | Has adjacent mode
   }
 
+  // IMPOSSIBLE AI CODE
+  
+
+  // ADJACENT AI CODE
   adjacentDecide() {
     let index;
     if (this.checkHorizontal) index = 1; // 0 = Horizontal
