@@ -7,13 +7,7 @@ class Player {
     this.gameController = gameController;
 
     // AI decisions
-    this.adjacentMode = false;
-    this.checkHorizontal = null;
-    this.checkPositive = null;
-
-    this.originalPosition = null;
-    this.currentPosition = null;
-    this.tries = 0;
+    this.adjacentAI = new AdjacentAI(this);
   }
 
   // For AI
@@ -24,8 +18,8 @@ class Player {
       return this.randomDecide();
     }
 
-    if (this.adjacentMode) {
-      return this.adjacentDecide();
+    if (this.adjacentAI.adjacentMode) {
+      return this.adjacentAI.adjacentDecide();
     }
 
     // Choose Adjacent AI (NORMAL) -- Random | Has adjacent mode
@@ -44,10 +38,33 @@ class Player {
     // Probability Map AI (EXTREME) -- Calculate proba map | Has adjacent mode
   }
 
-  // IMPOSSIBLE AI CODE
-  
+  randomDecide() {
+    const y = this.getRandomNumber(this.gameController.height);
+    const x = this.getRandomNumber(this.gameController.length);
+    if (!this.gameController.human.gameboard.validAttack(y, x))
+      return this.randomDecide();
+    return [y, x];
+  }
 
-  // ADJACENT AI CODE
+  getRandomNumber(max) {
+    return Math.floor(Math.random() * max);
+  }
+}
+
+// ADJACENT AI CODE
+class AdjacentAI {
+  constructor(player) {
+    this.player = player;
+
+    this.adjacentMode = false;
+    this.checkHorizontal = null;
+    this.checkPositive = null;
+
+    this.originalPosition = null;
+    this.currentPosition = null;
+    this.tries = 0;
+  }
+
   adjacentDecide() {
     let index;
     if (this.checkHorizontal) index = 1; // 0 = Horizontal
@@ -58,14 +75,14 @@ class Player {
 
     // Check if the adjacent space is invalid
     if (
-      !this.gameController.human.gameboard.validAttack(
+      !this.player.gameController.human.gameboard.validAttack(
         this.currentPosition[0],
         this.currentPosition[1]
       )
     ) {
       console.log("decided, but restarted");
       this.adjacentMiss();
-      return this.decideAI("medium");
+      return this.player.decideAI("medium");
     }
 
     return this.currentPosition;
@@ -97,8 +114,8 @@ class Player {
 
   checkAdjacentMode(location) {
     if (
-      this.gameboard.coordinates[location[0]][location[1]].hasHit &&
-      this.gameboard.coordinates[location[0]][location[1]].hasShip
+      this.player.gameboard.coordinates[location[0]][location[1]].hasHit &&
+      this.player.gameboard.coordinates[location[0]][location[1]].hasShip
     ) {
       console.log("adjacentMode!");
       // Hit a ship. Initalize/keep adjacentMode
@@ -131,20 +148,8 @@ class Player {
     this.currentPosition = Array.from(this.originalPosition);
   }
 
-  randomBoolean(choice) {
-    return this.getRandomNumber(2) === 1;
-  }
-
-  randomDecide() {
-    const y = this.getRandomNumber(this.gameController.height);
-    const x = this.getRandomNumber(this.gameController.length);
-    if (!this.gameController.human.gameboard.validAttack(y, x))
-      return this.randomDecide();
-    return [y, x];
-  }
-
-  getRandomNumber(max) {
-    return Math.floor(Math.random() * max);
+  randomBoolean() {
+    return this.player.getRandomNumber(2) === 1;
   }
 }
 
