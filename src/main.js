@@ -48,7 +48,7 @@ class GameController {
 
   attackPlayer() {
     // Random AI
-    const compDecision = this.human.decideAI("medium"); // adjustable
+    const compDecision = this.human.decideAI("hard"); // adjustable
     this.human.gameboard.receiveAttack(compDecision[0], compDecision[1]);
     this.human.checkAdjacentMode(compDecision);
   }

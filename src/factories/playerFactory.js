@@ -34,6 +34,12 @@ class Player {
     }
 
     // Checkerboard AI (HARD) -- Checkerboard | Has adjacent mode
+    if (difficulty === "hard") {
+      const location = this.randomDecide();
+      // If even, then it is valid
+      if ((location[0] + location[1]) % 2 === 0) return location;
+      return this.decideAI("hard");
+    }
 
     // Probability Map AI (EXTREME) -- Calculate proba map | Has adjacent mode
   }
