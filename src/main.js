@@ -47,8 +47,7 @@ class GameController {
   }
 
   attackPlayer() {
-    // Random AI
-    const compDecision = this.human.decideAI("hard"); // adjustable
+    const compDecision = this.human.decideAI("extreme"); // adjustable
     this.human.gameboard.receiveAttack(compDecision[0], compDecision[1]);
     this.human.adjacentAI.checkAdjacentMode(compDecision);
   }
@@ -186,7 +185,7 @@ class RenderController {
     const computer = this.gameController.getComputerPlayer();
     // console.log("Human gameboard:", human.gameboard.coordinates);
     // console.log("Computer gameboard:", computer.gameboard.coordinates);
-    console.log("Human:", human);
+    console.log("Human:", human.gameboard.coordinates);
     // console.log("Computer:", computer);
   }
 }

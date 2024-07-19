@@ -3,9 +3,14 @@ import Ship from "./shipFactory.js";
 class Gameboard {
   constructor() {
     this.coordinates;
+    this.length;
+    this.height;
   }
 
   resetBoard(height, length) {
+    this.length = length;
+    this.height = height;
+
     this.coordinates = [];
     for (let h = 0; h < height; h++) {
       this.coordinates.push([]);
@@ -53,6 +58,26 @@ class Gameboard {
     if (rotation === "vertical") {
       for (let y = yLoc; y < yLoc + length; y++) {
         if (this.coordinates[y]?.[xLoc]?.hasShip !== null) return false;
+      }
+    }
+    return true;
+  }
+
+  validHitPlacement(location, length, rotation) {
+    const yLoc = location[0];
+    const xLoc = location[1];
+
+    if (rotation === "horizontal") {
+      for (let x = xLoc; x < xLoc + length; x++) {
+        if (this.coordinates[yLoc]?.[x]?.hasHit === undefined) return false;
+        if (this.coordinates[yLoc]?.[x]?.hasHit) return false;
+      }
+    }
+
+    if (rotation === "vertical") {
+      for (let y = yLoc; y < yLoc + length; y++) {
+        if (this.coordinates[y]?.[xLoc]?.hasHit === undefined) return false;
+        if (this.coordinates[y]?.[xLoc]?.hasHit) return false;;
       }
     }
     return true;

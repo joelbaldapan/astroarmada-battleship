@@ -8,6 +8,7 @@ class Player {
 
     // AI decisions
     this.adjacentAI = new AdjacentAI(this);
+    this.extremeAI = new ExtremeAI(this);
   }
 
   // For AI
@@ -36,6 +37,9 @@ class Player {
     }
 
     // Probability Map AI (EXTREME) -- Calculate proba map | Has adjacent mode
+    if (difficulty === "extreme") {
+      return this.extremeAI.extremeDecide();
+    }
   }
 
   randomDecide() {
@@ -51,7 +55,65 @@ class Player {
   }
 }
 
-// ADJACENT AI CODE
+class ExtremeAI {
+  constructor(player) {
+    this.player = player;
+    this.shipLengths = [5, 4, 3, 3, 2]; // TODO: Can be changed
+    this.directions = ["horizontal", "vertical"];
+  }
+
+  extremeDecide() {
+    this.resetProbabilityMap();
+    return this.checkProbabilityMap();
+  }
+
+  checkProbabilityMap() {
+    const coords = this.player.gameboard.coordinates;
+    const length = this.player.gameboard.length;
+    const height = this.player.gameboard.height;
+    const gameboard = this.player.gameboard;
+
+    this.shipLengths.forEach((shipLength) => {
+      this.directions.forEach((direction) => {
+        for (let y = 0; y < height; y++) {
+          for (let x = 0; x < length; x++) {
+            if (gameboard.validHitPlacement([y, x], shipLength, direction)) {
+              for (let i = 0; i < shipLength; i++) {
+                if (direction === "horizontal") {
+                  coords[y][x + i].probability++;
+                }
+                if (direction === "vertical") {
+                  coords[y + i][x].probability++;
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+    console.log(coords);
+
+    let bestMove = { location, probability: 0 };
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < length; x++) {
+        if (coords[y][x].probability >= bestMove.probability) {
+          bestMove.probability = coords[y][x].probability;
+          bestMove.location = [y, x];
+        }
+      }
+    }
+    return bestMove.location;
+  }
+
+  resetProbabilityMap() {
+    this.highestProbability = 0;
+    this.player.gameboard.coordinates.forEach((row) =>
+      row.forEach((cell) => (cell.probability = 0))
+    );
+  }
+}
+
 class AdjacentAI {
   constructor(player) {
     this.player = player;
@@ -80,7 +142,6 @@ class AdjacentAI {
         this.currentPosition[1]
       )
     ) {
-      console.log("decided, but restarted");
       this.adjacentMiss();
       return this.player.decideAI("medium");
     }
@@ -95,7 +156,6 @@ class AdjacentAI {
     // 50% chance to start (positive) left-right, up-down | vice versa
     this.checkPositive = this.randomBoolean();
 
-    console.log("initialized.");
     this.adjacentMode = true;
     this.originalPosition = Array.from(currentLocation);
     this.currentPosition = Array.from(currentLocation);
@@ -117,18 +177,15 @@ class AdjacentAI {
       this.player.gameboard.coordinates[location[0]][location[1]].hasHit &&
       this.player.gameboard.coordinates[location[0]][location[1]].hasShip
     ) {
-      console.log("adjacentMode!");
       // Hit a ship. Initalize/keep adjacentMode
       if (!this.adjacentMode) return this.initalizeAdjacentDecide(location);
 
       // Found the direction on first try
       if (this.tries >= 4) {
-        console.log("First try.");
         this.tries = 1;
       }
     } else {
       // Missed, so evaluate what to do
-      console.log("Missed.");
       this.adjacentMiss();
     }
   }
@@ -144,7 +201,6 @@ class AdjacentAI {
     }
 
     this.tries--;
-    console.log("Minus Try!", this.tries);
     this.currentPosition = Array.from(this.originalPosition);
   }
 
