@@ -55,7 +55,7 @@ class Gameboard {
   }
 
   validAttack(vertical, horizontal) {
-    if (this.coordinates[vertical][horizontal].hasHit) return false;
+    if (this.coordinates[vertical][horizontal]?.hasHit) return false;
     return true;
   }
 
