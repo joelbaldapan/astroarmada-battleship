@@ -34,6 +34,9 @@ class GameController {
     this.human.gameboard.placeShip([7, 0], 5, "horizontal"); //temp
     this.human.gameboard.placeShip([4, 8], 4, "vertical"); //temp
     this.human.gameboard.placeShip([9, 4], 3, "horizontal"); //temp
+
+    this.human.gameboard.placeShip([0, 0], 5, "horizontal"); //temp
+    this.human.gameboard.placeShip([5, 0], 2, "horizontal"); //temp
   }
 
   attackComputer(verticalLoc, horizontalLoc) {

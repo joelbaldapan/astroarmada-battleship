@@ -53,8 +53,9 @@ class Player {
         this.currentPosition[1]
       )
     ) {
+      console.log("decided, but restarted");
       this.adjacentMiss();
-      return this.adjacentDecide();
+      return this.decideAI("medium");
     }
 
     return this.currentPosition;
@@ -71,7 +72,7 @@ class Player {
     this.adjacentMode = true;
     this.originalPosition = Array.from(currentLocation);
     this.currentPosition = Array.from(currentLocation);
-    this.tries = 4;
+    this.tries = 5;
   }
 
   resetAdjacentMode() {
@@ -91,8 +92,13 @@ class Player {
     ) {
       console.log("adjacentMode!");
       // Hit a ship. Initalize/keep adjacentMode
-      if (!this.adjacentMode) this.initalizeAdjacentDecide(location);
-      return;
+      if (!this.adjacentMode) return this.initalizeAdjacentDecide(location);
+
+      // Found the direction on first try
+      if (this.tries >= 4) {
+        console.log("First try.");
+        this.tries = 1;
+      }
     } else {
       // Missed, so evaluate what to do
       console.log("Missed.");
@@ -104,13 +110,14 @@ class Player {
     if (!this.tries) return this.resetAdjacentMode();
 
     // After checking to the twice from both directions, then switch axis
-    if (this.tries === 2) {
+    if (this.tries === 3) {
       this.checkHorizontal = !this.checkHorizontal;
     } else {
       this.checkPositive = !this.checkPositive;
     }
 
     this.tries--;
+    console.log("Minus Try!", this.tries);
     this.currentPosition = Array.from(this.originalPosition);
   }
 
