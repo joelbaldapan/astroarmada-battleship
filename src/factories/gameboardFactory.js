@@ -5,11 +5,13 @@ class Gameboard {
     this.coordinates;
     this.length;
     this.height;
+    this.shipsPlaced = [];
   }
 
   resetBoard(height, length) {
     this.length = length;
     this.height = height;
+    this.shipsPlaced = [];
 
     this.coordinates = [];
     for (let h = 0; h < height; h++) {
@@ -26,6 +28,7 @@ class Gameboard {
 
   placeShip(location, length, rotation) {
     const ship = new Ship(length);
+    this.shipsPlaced.push(ship.length);
 
     const yLoc = location[0];
     const xLoc = location[1];
@@ -77,7 +80,7 @@ class Gameboard {
     if (rotation === "vertical") {
       for (let y = yLoc; y < yLoc + length; y++) {
         if (this.coordinates[y]?.[xLoc]?.hasHit === undefined) return false;
-        if (this.coordinates[y]?.[xLoc]?.hasHit) return false;;
+        if (this.coordinates[y]?.[xLoc]?.hasHit) return false;
       }
     }
     return true;

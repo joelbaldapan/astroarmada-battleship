@@ -58,16 +58,32 @@ class Player {
 class ExtremeAI {
   constructor(player) {
     this.player = player;
-    this.shipLengths = [5, 4, 3, 3, 2]; // TODO: Can be changed
+    this.shipLengths;
     this.directions = ["horizontal", "vertical"];
+  }
+
+  resetShipLengths() {
+    this.shipLengths = Array.from(this.player.gameboard.shipsPlaced);
   }
 
   extremeDecide() {
     this.resetProbabilityMap();
-    return this.checkProbabilityMap();
+    this.updateProbabilityMap();
+    return this.getBestProbability();
   }
 
-  checkProbabilityMap() {
+  checkSunkShip(location) {
+    const currentShip =
+      this.player.gameboard.coordinates[location[0]][location[1]].hasShip;
+
+    // Remove sunk ship in shipLengths
+    if (currentShip && currentShip.sunk) {
+      const index = this.shipLengths.indexOf(currentShip.length);
+      if (index !== -1) this.shipLengths.splice(index, 1);
+    }
+  }
+
+  updateProbabilityMap() {
     const coords = this.player.gameboard.coordinates;
     const length = this.player.gameboard.length;
     const height = this.player.gameboard.height;
@@ -92,17 +108,31 @@ class ExtremeAI {
       });
     });
     console.log(coords);
+  }
 
+  getBestProbability() {
+    const coords = this.player.gameboard.coordinates;
+    const length = this.player.gameboard.length;
+    const height = this.player.gameboard.height;
     let bestMove = { location, probability: 0 };
 
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < length; x++) {
-        if (coords[y][x].probability >= bestMove.probability) {
+        if (coords[y][x].probability === bestMove.probability) {
+          // If equal probability, then choose 50/50
+          if (this.player.getRandomNumber(2)) {
+            bestMove.probability = coords[y][x].probability;
+            bestMove.location = [y, x];
+          }
+        }
+        if (coords[y][x].probability > bestMove.probability) {
+          // If more than probability, then replace bestMove
           bestMove.probability = coords[y][x].probability;
           bestMove.location = [y, x];
         }
       }
     }
+
     return bestMove.location;
   }
 

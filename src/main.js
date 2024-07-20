@@ -30,13 +30,14 @@ class GameController {
     this.computer.gameboard.placeShip([8, 4], 4, "horizontal"); //temp
 
     this.human.gameboard.placeShip([2, 1], 2, "vertical"); //temp
-    this.human.gameboard.placeShip([3, 5], 3, "vertical"); //temp
+    this.human.gameboard.placeShip([2, 5], 3, "vertical"); //temp
     this.human.gameboard.placeShip([7, 0], 5, "horizontal"); //temp
     this.human.gameboard.placeShip([4, 8], 4, "vertical"); //temp
     this.human.gameboard.placeShip([9, 4], 3, "horizontal"); //temp
 
-    this.human.gameboard.placeShip([0, 0], 5, "horizontal"); //temp
-    this.human.gameboard.placeShip([5, 0], 2, "horizontal"); //temp
+    // this.human.gameboard.placeShip([0, 0], 5, "horizontal"); //temp
+    // this.human.gameboard.placeShip([5, 0], 2, "horizontal"); //temp
+    this.human.extremeAI.resetShipLengths();
   }
 
   attackComputer(verticalLoc, horizontalLoc) {
@@ -50,6 +51,7 @@ class GameController {
     const compDecision = this.human.decideAI("extreme"); // adjustable
     this.human.gameboard.receiveAttack(compDecision[0], compDecision[1]);
     this.human.adjacentAI.checkAdjacentMode(compDecision);
+    this.human.extremeAI.checkSunkShip(compDecision);
   }
 }
 
