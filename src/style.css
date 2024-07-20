@@ -47,6 +47,8 @@ body {
 }
 
 .cell {
+  position: relative;
+  overflow: visible;
   width: 100%;
   height: 100%;
   background-color: var(--board-background);
@@ -54,14 +56,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-}
-
-.cell img {
-  width: 90%;
-  height: 90%;
-
-  filter: brightness(500);
-  /* temporary */
 }
 
 #computer-board {
@@ -94,4 +88,22 @@ body {
     justify-content: center;
     align-items: center;
   }
+}
+
+.ship-img {
+  z-index: 50;
+  position: absolute;
+  top: 0%;
+  left: 0%;
+  width: 100%;
+  object-fit: contain;
+  transform-origin: top center;
+}
+
+.hit-img {
+  width: 90%;
+  height: 90%;
+
+  filter: brightness(500);
+  /* temporary */
 }

@@ -21,6 +21,7 @@ class Gameboard {
           hasHit: false,
           hasShip: null,
           probability: 0,
+          shipHead: false,
         });
       }
     }
@@ -33,19 +34,30 @@ class Gameboard {
     const yLoc = location[0];
     const xLoc = location[1];
 
+    if (!this.validPlacement(location, length, rotation)) return;
+
+    // Mark head of the ship
+    this.coordinates[yLoc][xLoc].shipHead = {
+      length: length,
+      rotation: rotation,
+      variant: this.checkVariants(length),
+    };
+
     if (rotation === "horizontal") {
-      if (!this.validPlacement(location, length, rotation)) return;
       for (let x = xLoc; x < xLoc + length; x++) {
         this.coordinates[yLoc][x].hasShip = ship;
       }
     }
 
     if (rotation === "vertical") {
-      if (!this.validPlacement(location, length, rotation)) return;
       for (let y = yLoc; y < yLoc + length; y++) {
         this.coordinates[y][xLoc].hasShip = ship;
       }
     }
+  }
+
+  checkVariants(length) {
+    return this.shipsPlaced.filter((item) => item === length).length;
   }
 
   validPlacement(location, length, rotation) {

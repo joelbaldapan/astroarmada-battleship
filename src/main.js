@@ -142,33 +142,69 @@ class RenderController {
       let cellIndex = 0;
       player.gameboard.coordinates.forEach((row) => {
         row.forEach((cell) => {
-          this.checkUpdateCell(cell, cellIndex, boardId);
+          this.updateCellHit(cell, cellIndex, boardId);
+          this.updateCellShowShip(cell, cellIndex, boardId);
           cellIndex++;
         });
       });
     });
   }
 
-  checkUpdateCell(cell, cellIndex, boardId) {
+  updateCellShowShip(cell, cellIndex, boardId) {
+    if (cell.hasShip?.sunk) {
+      const targetCell = document.querySelector(
+        `#${boardId} #cell-${cellIndex}`
+      );
+      targetCell.style.backgroundColor = "#070220";
+
+      const targetImg = document.querySelector(
+        `#${boardId} #cell-${cellIndex} img`
+      );
+      targetImg.style.opacity = 0.1;
+    }
+
+    if (cell.hasShip?.sunk && cell.shipHead) {
+      const shipImg = document.createElement("img");
+
+      let color = "red"; // Human
+      let length = cell.shipHead.length;
+      let variant = cell.shipHead.variant;
+      let rotation = cell.shipHead.rotation;
+
+      if (boardId === "computer-board") color = "orange";
+      if (rotation === "horizontal") {
+        shipImg.style.top = `50%`;
+        shipImg.style.left = `${(length - 1) * 100 + 50}%`;
+        shipImg.style.transform = `rotate(90deg)`;
+      }
+
+      shipImg.src = `/src/assets/images/ships/${color}/${color}-${length}-${variant}.png`;
+      shipImg.classList.add("ship-img");
+      shipImg.style.filter = `brightness(0.9)`;
+
+      const targetCell = document.querySelector(
+        `#${boardId} #cell-${cellIndex}`
+      );
+
+      targetCell.appendChild(shipImg);
+    }
+  }
+
+  updateCellHit(cell, cellIndex, boardId) {
     if (cell.hasHit) {
-      const imgElement = document.createElement("img");
-      imgElement.src = "/src/assets/images/gameboard/hit.png";
+      const hitImg = document.createElement("img");
+      hitImg.src = "/src/assets/images/gameboard/hit.png";
       if (cell.hasShip)
-        imgElement.src = "/src/assets/images/gameboard/hit-and-ship.png";
+        hitImg.src = "/src/assets/images/gameboard/hit-and-ship.png";
+      hitImg.classList.add("hit-img");
 
       const targetCell = document.querySelector(
         `#${boardId} #cell-${cellIndex}`
       );
       targetCell.innerHTML = ""; // Remove all children
       targetCell.classList.add("has-hit");
-      targetCell.appendChild(imgElement);
+      targetCell.appendChild(hitImg);
     }
-    if (cell.hasShip) {
-      const targetCell = document.querySelector(
-        `#${boardId} #cell-${cellIndex}`
-      );
-      targetCell.style.backgroundColor = "gray";
-    } // TEMPORARY
   }
 
   renderBoard(player) {
