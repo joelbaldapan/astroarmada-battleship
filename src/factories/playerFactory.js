@@ -107,7 +107,6 @@ class ExtremeAI {
         }
       });
     });
-    console.log(coords);
   }
 
   getBestProbability() {

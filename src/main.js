@@ -6,6 +6,9 @@ class GameController {
     this.length = length;
     this.human = new Player("human", this);
     this.computer = new Player("computer", this);
+
+    // renderController
+    this.renderController;
   }
 
   getHumanPlayer() {
@@ -44,14 +47,23 @@ class GameController {
     if (!this.computer.gameboard.validAttack(verticalLoc, horizontalLoc))
       return;
     this.computer.gameboard.receiveAttack(verticalLoc, horizontalLoc);
-    this.attackPlayer();
+    if (!this.computer.gameboard.successfulAttack(verticalLoc, horizontalLoc))
+      this.attackPlayer();
   }
 
   attackPlayer() {
-    const compDecision = this.human.decideAI("extreme"); // adjustable
-    this.human.gameboard.receiveAttack(compDecision[0], compDecision[1]);
-    this.human.adjacentAI.checkAdjacentMode(compDecision);
-    this.human.extremeAI.checkSunkShip(compDecision);
+    const compChoice = this.human.decideAI("extreme"); // adjustable
+    this.human.gameboard.receiveAttack(compChoice[0], compChoice[1]);
+    this.human.adjacentAI.checkAdjacentMode(compChoice);
+    this.human.extremeAI.checkSunkShip(compChoice);
+    this.renderController.updateBoard();
+
+    if (this.human.gameboard.successfulAttack(compChoice[0], compChoice[1])) {
+      setTimeout(() => {
+        console.log("Timeout fired, attacking again");
+        this.attackPlayer();
+      }, 200); // Variable delay
+    }
   }
 }
 
@@ -67,6 +79,7 @@ class EventController {
 
     this.gameController = new GameController(height, length);
     this.renderController = new RenderController(this.gameController);
+    this.gameController.renderController = this.renderController;
 
     this.setupEventListeners();
   }

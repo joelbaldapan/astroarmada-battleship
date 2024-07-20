@@ -102,6 +102,11 @@ class Gameboard {
     if (cell.hasShip) cell.hasShip.hit();
   }
 
+  successfulAttack(vertical, horizontal) {
+    const cell = this.coordinates[vertical][horizontal];
+    if (cell.hasShip) return true;
+  }
+
   checkFinish() {
     return !this.coordinates.some((row) =>
       row.some((cell) => cell.hasShip !== null && !cell.hasShip.sunk)
