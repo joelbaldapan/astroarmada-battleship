@@ -99,6 +99,7 @@ class EventController {
     this.shipSettingsBtn = document.querySelectorAll(
       ".ship-size-container img"
     );
+    this.settings = document.getElementById("settings");
 
     this.gameController = new GameController(height, length);
     this.renderController = new RenderController(this.gameController);
@@ -127,7 +128,9 @@ class EventController {
       this.computerCellsArr = [...this.computerCells];
 
       this.gameController.temporaryInitialize(); // TEMPORARY
+      this.gameController.human.extremeAI.resetShipLengths();
       this.renderController.updateBoard();
+      this.settings.style.display = "none";
 
       // Set up computer cell listeners after getting computerCells array
       this.setupComputerCellListeners();
@@ -278,7 +281,7 @@ class RenderController {
     // console.log("Human gameboard:", human.gameboard.coordinates);
     // console.log("Computer gameboard:", computer.gameboard.coordinates);
     console.log("Human:", human.gameboard.coordinates);
-    // console.log("Computer:", computer);
+    console.log("Computer:", computer.gameboard.coordinates);
   }
 }
 

@@ -84,7 +84,7 @@ class ExtremeAI {
   }
 
   updateProbabilityMap() {
-    const coords = this.player.gameboard.coorfdinates;
+    const coords = this.player.gameboard.coordinates;
     const length = this.player.gameboard.length;
     const height = this.player.gameboard.height;
     const gameboard = this.player.gameboard;
