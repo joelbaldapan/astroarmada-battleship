@@ -95,8 +95,7 @@ class EventController {
     });
 
     this.renderBtn.addEventListener("click", () => {
-      this.gameController.restartGame(this.height, this.length);
-      this.renderController.renderBoard("human");
+      this.renderHumanBoard();
     });
 
     this.startBtn.addEventListener("click", () => {
@@ -110,6 +109,11 @@ class EventController {
       // Set up computer cell listeners after getting computerCells array
       this.setupComputerCellListeners();
     });
+  }
+
+  renderHumanBoard() {
+    this.gameController.restartGame(this.height, this.length);
+    this.renderController.renderBoard("human");
   }
 
   setupComputerCellListeners() {
@@ -246,3 +250,4 @@ class RenderController {
 }
 
 const eventController = new EventController(10, 10);
+eventController.renderHumanBoard();

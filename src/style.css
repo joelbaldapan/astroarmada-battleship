@@ -74,22 +74,6 @@ body {
   gap: 5vh;
 }
 
-@media (max-width: 750px) {
-  .gameboard {
-    width: 80vw;
-    height: 80vw;
-    grid-gap: 0.5vw;
-    border: 0.5vw solid var(--board-outline);
-  }
-
-  #gameboard-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
 .ship-img {
   z-index: 50;
   position: absolute;
@@ -109,11 +93,9 @@ body {
 }
 
 .sunk-img {
-  -webkit-filter: drop-shadow(1px 1px 0 white)
-                  drop-shadow(-1px -1px 0 white);
-  filter: drop-shadow(1px 1px 0 white) 
-          drop-shadow(-1px -1px 0 white)
-          brightness(1.2);
+  -webkit-filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
+  filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white)
+    brightness(1.2);
 }
 
 h1 {
@@ -122,4 +104,68 @@ h1 {
 
 h2 {
   font-size: 2rem;
+}
+
+#full-game-container {
+  display: flex;
+  flex-direction: row;
+  gap: 5vw;
+}
+
+#settings {
+  width: 40vw;
+  height: 40vw;
+  background-color: var(--board-background);
+  border: 0.5vw solid var(--board-outline);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+#ships-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+#settings img {
+  width: 5vw;
+}
+
+@media (max-width: 750px) {
+  .gameboard {
+    width: 80vw;
+    height: 80vw;
+    grid-gap: 0.5vw;
+    border: 0.5vw solid var(--board-outline);
+  }
+
+  #gameboard-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #full-game-container {
+    display: flex;
+    flex-direction: column;
+    gap: 5vw;
+  }
+
+  #settings {
+    width: 80vw;
+    height: 80vw;
+  }
+
+  #settings img {
+    transform: rotate(0deg);
+    width: 10vw;
+  }
+
 }
