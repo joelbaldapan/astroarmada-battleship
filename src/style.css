@@ -107,3 +107,19 @@ body {
   filter: brightness(500);
   /* temporary */
 }
+
+.sunk-img {
+  -webkit-filter: drop-shadow(1px 1px 0 white)
+                  drop-shadow(-1px -1px 0 white);
+  filter: drop-shadow(1px 1px 0 white) 
+          drop-shadow(-1px -1px 0 white)
+          brightness(1.2);
+}
+
+h1 {
+  font-size: 4rem;
+}
+
+h2 {
+  font-size: 2rem;
+}

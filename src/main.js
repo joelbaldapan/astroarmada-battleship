@@ -76,6 +76,7 @@ class EventController {
     this.renderBtn = document.getElementById("render-btn");
     this.updateBtn = document.getElementById("update-btn");
     this.attackBtn = document.getElementById("attack-btn");
+    this.startBtn = document.getElementById("start-btn");
 
     this.gameController = new GameController(height, length);
     this.renderController = new RenderController(this.gameController);
@@ -94,12 +95,15 @@ class EventController {
     });
 
     this.renderBtn.addEventListener("click", () => {
+      this.gameController.restartGame(this.height, this.length);
       this.renderController.renderBoard("human");
+    });
+
+    this.startBtn.addEventListener("click", () => {
       this.renderController.renderBoard("computer");
       this.computerCells = document.querySelectorAll("#computer-board .cell");
       this.computerCellsArr = [...this.computerCells];
 
-      this.gameController.restartGame(this.height, this.length);
       this.gameController.temporaryInitialize(); // TEMPORARY
       this.renderController.updateBoard();
 
@@ -180,7 +184,7 @@ class RenderController {
 
       shipImg.src = `/src/assets/images/ships/${color}/${color}-${length}-${variant}.png`;
       shipImg.classList.add("ship-img");
-      shipImg.style.filter = `brightness(0.9)`;
+      shipImg.classList.add("sunk-img");
 
       const targetCell = document.querySelector(
         `#${boardId} #cell-${cellIndex}`
