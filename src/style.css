@@ -12,6 +12,9 @@
 
   --font-main: "Helvetica", serif;
   --font-w-main: "Zilla Slab", serif;
+
+  --board-size: 40vw;
+  --board-size-small: 80vw;
 }
 
 * {
@@ -38,8 +41,8 @@ body {
 
 .gameboard {
   background-color: var(--board-outline);
-  width: 40vw;
-  height: 40vw;
+  width: var(--board-size);
+  height: var(--board-size);
 
   display: grid;
   grid-gap: 0.25vw;
@@ -113,10 +116,10 @@ h2 {
 }
 
 #settings {
-  width: 40vw;
-  height: 40vw;
+  width: var(--board-size);
+  height: var(--board-size);
   background-color: var(--board-background);
-  border: 0.5vw solid var(--board-outline);
+  border: 0.2vw solid var(--board-outline);
 
   display: flex;
   flex-direction: column;
@@ -133,14 +136,21 @@ h2 {
   align-content: center;
 }
 
-#settings img {
+#ships-container img {
   width: 5vw;
+}
+
+#ships-container img:hover {
+  -webkit-filter: drop-shadow(2px 2px 0 white) drop-shadow(-2px -2px 0 white);
+  filter: drop-shadow(2px 2px 0 white) drop-shadow(-2px -2px 0 white)
+    brightness(1.2);
+  cursor: pointer;
 }
 
 @media (max-width: 750px) {
   .gameboard {
-    width: 80vw;
-    height: 80vw;
+    width: var(--board-size-small);
+    height: var(--board-size-small);
     grid-gap: 0.5vw;
     border: 0.5vw solid var(--board-outline);
   }
@@ -159,13 +169,12 @@ h2 {
   }
 
   #settings {
-    width: 80vw;
-    height: 80vw;
+    width: var(--board-size-small);
+    height: var(--board-size-small);
+    border: 0.5vw solid var(--board-outline);
   }
 
-  #settings img {
-    transform: rotate(0deg);
+  #ships-container img {
     width: 10vw;
   }
-
 }

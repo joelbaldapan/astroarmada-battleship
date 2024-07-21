@@ -67,6 +67,24 @@ class GameController {
   }
 }
 
+class InitializeController {
+  constructor() {
+    this.totalShips = [];
+    this.placedShips = [];
+    this.rotatationMode = "vertical";
+    this.selectedShip = null;
+  }
+
+  toggleRotate() {
+    if (this.rotatationMode === "vertical") this.rotatationMode = "horizontal";
+    else this.rotatationMode = "vertical";
+  }
+
+  toggleSelectedShip(ship) {
+    this.selectedShip(ship);
+  }
+}
+
 class EventController {
   constructor(height, length) {
     this.height = height;
@@ -77,9 +95,14 @@ class EventController {
     this.updateBtn = document.getElementById("update-btn");
     this.attackBtn = document.getElementById("attack-btn");
     this.startBtn = document.getElementById("start-btn");
+    this.rotateBtn = document.getElementById("rotate-btn");
+    this.shipSettingsBtn = document.querySelectorAll(
+      ".ship-size-container img"
+    );
 
     this.gameController = new GameController(height, length);
     this.renderController = new RenderController(this.gameController);
+    this.initializeController = new InitializeController(this.renderController);
     this.gameController.renderController = this.renderController;
 
     this.setupEventListeners();
@@ -108,6 +131,16 @@ class EventController {
 
       // Set up computer cell listeners after getting computerCells array
       this.setupComputerCellListeners();
+    });
+
+    this.rotateBtn.addEventListener("click", () => {
+      this.initializeController.toggleRotate();
+    });
+
+    Array.from(this.shipSettingsBtn).forEach((shipSetting) => {
+      shipSetting.addEventListener("click", () => {
+        this.initializeController.toggleSelectedShip(shipSetting);
+      });
     });
   }
 
