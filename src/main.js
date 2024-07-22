@@ -26,17 +26,17 @@ class GameController {
 
   temporaryInitialize() {
     // FOR DEBUGGING CODE PURPOSES TEMPORARY
-    this.computer.gameboard.placeShip([0, 1], 2, "horizontal"); //temp
-    this.computer.gameboard.placeShip([2, 3], 3, "vertical"); //temp
-    this.computer.gameboard.placeShip([6, 2], 5, "horizontal"); //temp
-    this.computer.gameboard.placeShip([2, 8], 3, "vertical"); //temp
-    this.computer.gameboard.placeShip([8, 4], 4, "horizontal"); //temp
+    // this.computer.gameboard.placeShip([0, 1], 2, "horizontal"); //temp
+    // this.computer.gameboard.placeShip([2, 3], 3, "vertical"); //temp
+    // this.computer.gameboard.placeShip([6, 2], 5, "horizontal"); //temp
+    // this.computer.gameboard.placeShip([2, 8], 3, "vertical"); //temp
+    // this.computer.gameboard.placeShip([8, 4], 4, "horizontal"); //temp
 
-    this.human.gameboard.placeShip([2, 1], 2, "vertical"); //temp
-    this.human.gameboard.placeShip([2, 5], 3, "vertical"); //temp
-    this.human.gameboard.placeShip([7, 0], 5, "horizontal"); //temp
-    this.human.gameboard.placeShip([4, 8], 4, "vertical"); //temp
-    this.human.gameboard.placeShip([9, 4], 3, "horizontal"); //temp
+    // this.human.gameboard.placeShip([2, 1], 2, "vertical"); //temp
+    // this.human.gameboard.placeShip([2, 5], 3, "vertical"); //temp
+    // this.human.gameboard.placeShip([7, 0], 5, "horizontal"); //temp
+    // this.human.gameboard.placeShip([4, 8], 4, "vertical"); //temp
+    // this.human.gameboard.placeShip([9, 4], 3, "horizontal"); //temp
 
     // this.human.gameboard.placeShip([0, 0], 5, "horizontal"); //temp
     // this.human.gameboard.placeShip([5, 0], 2, "horizontal"); //temp
@@ -60,7 +60,6 @@ class GameController {
 
     if (this.human.gameboard.successfulAttack(compChoice[0], compChoice[1])) {
       setTimeout(() => {
-        console.log("Timeout fired, attacking again");
         this.attackPlayer();
       }, 200); // Variable delay
     }
@@ -121,7 +120,25 @@ class InitializeController {
     );
   }
 
-  confirmShipPlacement() {}
+  confirmShipPlacement(location, cellIndex) {
+    if (this.selectedShip === null) return;
+    const length = +this.selectedShip.id.charAt(0);
+
+    if (
+      this.gameController.human.gameboard.validPlacement(
+        location,
+        length,
+        this.rotatationMode
+      )
+    ) {
+      this.gameController.human.gameboard.placeShip(
+        location,
+        length,
+        this.rotatationMode
+      );
+      this.renderController.updateBoard();
+    }
+  }
 }
 
 class EventController {
@@ -229,6 +246,13 @@ class EventController {
           cellIndex
         );
       });
+
+      cell.addEventListener("click", () => {
+        this.initializeController.confirmShipPlacement(
+          [verticalLoc, horizontalLoc],
+          cellIndex
+        );
+      });
     });
   }
 }
@@ -301,6 +325,23 @@ class RenderController {
   }
 
   updateCellShowShip(cell, cellIndex, boardId) {
+    if (boardId === "human-board") {
+      const targetCell = document.querySelector(
+        `#${boardId} #cell-${cellIndex}`
+      );
+
+      if (cell.hasShip && cell.shipHead) {
+        const shipImg = this.createShipImg(cell, cellIndex, boardId);
+        targetCell.appendChild(shipImg);
+      } else {
+        // If the image exists, remove it
+        const shipImg = targetCell.querySelector(".ship-img");
+        if (shipImg) {
+          shipImg.remove();
+        }
+      }
+    }
+
     if (cell.hasShip?.sunk) {
       const targetCell = document.querySelector(
         `#${boardId} #cell-${cellIndex}`
@@ -314,30 +355,34 @@ class RenderController {
     }
 
     if (cell.hasShip?.sunk && cell.shipHead) {
-      const shipImg = document.createElement("img");
-
-      let color = "red"; // Human
-      let length = cell.shipHead.length;
-      let variant = cell.shipHead.variant;
-      let rotation = cell.shipHead.rotation;
-
-      if (boardId === "computer-board") color = "orange";
-      if (rotation === "horizontal") {
-        shipImg.style.top = `50%`;
-        shipImg.style.left = `${(length - 1) * 100 + 50}%`;
-        shipImg.style.transform = `rotate(90deg)`;
-      }
-
-      shipImg.src = `/src/assets/images/ships/${color}/${color}-${length}-${variant}.png`;
-      shipImg.classList.add("ship-img");
+      const shipImg = this.createShipImg(cell, cellIndex, boardId);
       shipImg.classList.add("sunk-img");
 
       const targetCell = document.querySelector(
         `#${boardId} #cell-${cellIndex}`
       );
-
       targetCell.appendChild(shipImg);
     }
+  }
+
+  createShipImg(cell, cellIndex, boardId) {
+    const shipImg = document.createElement("img");
+
+    let color = "red"; // Human
+    let length = cell.shipHead.length;
+    let variant = cell.shipHead.variant;
+    let rotation = cell.shipHead.rotation;
+
+    if (boardId === "computer-board") color = "orange";
+    if (rotation === "horizontal") {
+      shipImg.style.top = `50%`;
+      shipImg.style.left = `${(length - 1) * 100 + 50}%`;
+      shipImg.style.transform = `rotate(90deg)`;
+    }
+
+    shipImg.src = `/src/assets/images/ships/${color}/${color}-${length}-${variant}.png`;
+    shipImg.classList.add("ship-img");
+    return shipImg;
   }
 
   updateCellHit(cell, cellIndex, boardId) {
