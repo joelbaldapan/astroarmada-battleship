@@ -7,7 +7,7 @@ class GameController {
     this.human = new Player("human", this);
     this.computer = new Player("computer", this);
 
-    // renderController
+    // Connect to renderController
     this.renderController;
   }
 
@@ -68,11 +68,15 @@ class GameController {
 }
 
 class InitializeController {
-  constructor() {
+  constructor(gameController, renderController) {
     this.totalShips = [];
     this.placedShips = [];
     this.rotatationMode = "vertical";
     this.selectedShip = null;
+
+    // Connect to other controllers
+    this.gameController = gameController;
+    this.renderController = renderController;
   }
 
   toggleRotate() {
@@ -81,8 +85,43 @@ class InitializeController {
   }
 
   toggleSelectedShip(ship) {
-    this.selectedShip(ship);
+    if (this.selectedShip)
+      this.selectedShip.classList.remove("highlighted-ship");
+    this.selectedShip = ship;
+    this.selectedShip.classList.add("highlighted-ship");
   }
+
+  highlightShipPlacement(location, cellIndex) {
+    if (this.selectedShip === null) return;
+    const length = +this.selectedShip.id.charAt(0);
+
+    if (
+      this.gameController.human.gameboard.validPlacement(
+        location,
+        length,
+        this.rotatationMode
+      )
+    ) {
+      this.renderController.updateHighlightPlacement(
+        cellIndex,
+        length,
+        this.rotatationMode
+      );
+    }
+  }
+
+  clearHighlightShipPlacement(location, cellIndex) {
+    if (this.selectedShip === null) return;
+    const length = +this.selectedShip.id.charAt(0);
+
+    this.renderController.updateClearHighlightPlacement(
+      cellIndex,
+      length,
+      this.rotatationMode
+    );
+  }
+
+  confirmShipPlacement() {}
 }
 
 class EventController {
@@ -103,7 +142,10 @@ class EventController {
 
     this.gameController = new GameController(height, length);
     this.renderController = new RenderController(this.gameController);
-    this.initializeController = new InitializeController(this.renderController);
+    this.initializeController = new InitializeController(
+      this.gameController,
+      this.renderController
+    );
     this.gameController.renderController = this.renderController;
 
     this.setupEventListeners();
@@ -150,6 +192,10 @@ class EventController {
   renderHumanBoard() {
     this.gameController.restartGame(this.height, this.length);
     this.renderController.renderBoard("human");
+
+    this.humanCells = document.querySelectorAll("#human-board .cell");
+    this.humanCellsArr = [...this.humanCells];
+    this.setupHumanCellListeners();
   }
 
   setupComputerCellListeners() {
@@ -163,11 +209,71 @@ class EventController {
       });
     });
   }
+
+  setupHumanCellListeners() {
+    this.humanCellsArr.forEach((cell) => {
+      const cellIndex = parseInt(cell.id.substring(5));
+      const verticalLoc = Math.floor(cellIndex / this.length);
+      const horizontalLoc = cellIndex % this.length;
+
+      cell.addEventListener("mouseenter", () => {
+        this.initializeController.highlightShipPlacement(
+          [verticalLoc, horizontalLoc],
+          cellIndex
+        );
+      });
+
+      cell.addEventListener("mouseleave", () => {
+        this.initializeController.clearHighlightShipPlacement(
+          [verticalLoc, horizontalLoc],
+          cellIndex
+        );
+      });
+    });
+  }
 }
 
 class RenderController {
   constructor(gameController) {
     this.gameController = gameController;
+  }
+
+  updateHighlightPlacement(cellIndex, length, rotation) {
+    if (rotation === "horizontal") {
+      for (let i = cellIndex; i < cellIndex + length; i++) {
+        const selectedCell = document.querySelector(`#human-board #cell-${i}`);
+        selectedCell.classList.add("highlighted-cell");
+      }
+    }
+
+    if (rotation === "vertical") {
+      for (let i = 0; i < length; i++) {
+        const adjustedIndex = cellIndex + i * this.gameController.length;
+        const selectedCell = document.querySelector(
+          `#human-board #cell-${adjustedIndex}`
+        );
+        selectedCell.classList.add("highlighted-cell");
+      }
+    }
+  }
+
+  updateClearHighlightPlacement(cellIndex, length, rotation) {
+    if (rotation === "horizontal") {
+      for (let i = cellIndex; i < cellIndex + length; i++) {
+        const selectedCell = document.querySelector(`#human-board #cell-${i}`);
+        selectedCell.classList.remove("highlighted-cell");
+      }
+    }
+
+    if (rotation === "vertical") {
+      for (let i = 0; i < length; i++) {
+        const adjustedIndex = cellIndex + i * this.gameController.length;
+        const selectedCell = document.querySelector(
+          `#human-board #cell-${adjustedIndex}`
+        );
+        selectedCell.classList.remove("highlighted-cell");
+      }
+    }
   }
 
   updateBoard() {
@@ -278,10 +384,12 @@ class RenderController {
   consoleLog() {
     const human = this.gameController.getHumanPlayer();
     const computer = this.gameController.getComputerPlayer();
-    // console.log("Human gameboard:", human.gameboard.coordinates);
-    // console.log("Computer gameboard:", computer.gameboard.coordinates);
-    console.log("Human:", human.gameboard.coordinates);
-    console.log("Computer:", computer.gameboard.coordinates);
+
+    // console.log("Human:", human.gameboard.coordinates);
+    // console.log("Computer:", computer.gameboard.coordinates);
+
+    console.log(eventController.initializeController.rotatationMode);
+    console.log(eventController.initializeController.selectedShip);
   }
 }
 

@@ -6,7 +6,10 @@
   --w-background: #040115;
 
   --board-background: #080227;
+  --board-highlighted: #4a29ee;
   --board-outline: #d2d0da32;
+
+  --highlighted: #411cff;
 
   --w-text: #cddbec;
 
@@ -140,10 +143,12 @@ h2 {
   width: 5vw;
 }
 
-#ships-container img:hover {
-  -webkit-filter: drop-shadow(2px 2px 0 white) drop-shadow(-2px -2px 0 white);
-  filter: drop-shadow(2px 2px 0 white) drop-shadow(-2px -2px 0 white)
-    brightness(1.2);
+#ships-container img:hover,
+.highlighted-ship {
+  -webkit-filter: drop-shadow(2px 2px 0 var(--highlighted))
+    drop-shadow(-2px -2px 0 var(--highlighted));
+  filter: drop-shadow(2px 2px 0 var(--highlighted))
+    drop-shadow(-2px -2px 0 var(--highlighted)) brightness(1.2);
   cursor: pointer;
 }
 
@@ -177,4 +182,8 @@ h2 {
   #ships-container img {
     width: 10vw;
   }
+}
+
+.highlighted-cell {
+  background-color: var(--board-highlighted);
 }
