@@ -134,7 +134,7 @@ class InitializeController {
       this.clearHighlightShipPlacement(location, cellIndex);
       this.toggleSelectedShip(null);
       this.renderController.updateBoard();
-      this.audioController.playAudio("deploy");
+      this.audioController.playAudio("deploy", 0.8);
     }
   }
 }
@@ -207,17 +207,17 @@ class EventController {
 
     this.rotateBtn.addEventListener("click", () => {
       this.initializeController.toggleRotate();
-      this.audioController.playAudio("click");
+      this.audioController.playAudio("click", 0.7);
     });
 
     this.shipSettingsBtnsArr.forEach((shipSetting) => {
       shipSetting.addEventListener("click", () => {
         this.initializeController.toggleSelectedShip(shipSetting);
-        this.audioController.playAudio("select");
+        this.audioController.playAudio("select", 0.8);
       });
 
       shipSetting.addEventListener("mouseenter", () => {
-        this.audioController.playAudio("click");
+        this.audioController.playAudio("click", 0.7);
       });
     });
 
@@ -275,7 +275,6 @@ class EventController {
           [verticalLoc, horizontalLoc],
           cellIndex
         );
-        this.audioController.playAudio("deploy");
       });
     });
   }
@@ -293,6 +292,7 @@ class AudioController {
   constructor() {}
 
   toggleBGMusic(bgMusic, musicBtn) {
+    bgMusic.volume = 1;
     if (bgMusic.paused) {
       bgMusic.play();
       musicBtn.textContent = "MUSIC: ON";
@@ -305,13 +305,14 @@ class AudioController {
   playRandomAudio(name) {
     const sound = new Audio();
     const number = this.getRandomNumber(4);
-    sound.src = `./assets/audio/${name}/${name}-${number}.mp3`;
+    sound.src = `/src/assets/audio/${name}/${name}-${number}.mp3`;
     sound.play();
   }
 
-  playAudio(name) {
+  playAudio(name, volume = 1) {
     const sound = new Audio();
-    sound.src = `./assets/audio/${name}.mp3`;
+    sound.src = `/src/assets/audio/${name}.mp3`;
+    sound.volume = volume;
     sound.play();
   }
 
