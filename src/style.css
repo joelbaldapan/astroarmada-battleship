@@ -91,6 +91,7 @@ body {
 }
 
 .hit-img {
+  z-index: 60;
   width: 90%;
   height: 90%;
 
@@ -101,7 +102,7 @@ body {
 .sunk-img {
   -webkit-filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
   filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white)
-    brightness(1.2);
+    brightness(1.5);
 }
 
 h1 {

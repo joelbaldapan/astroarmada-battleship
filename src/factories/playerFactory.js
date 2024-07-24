@@ -1,9 +1,10 @@
 import Gameboard from "./gameboardFactory.js";
 
 class Player {
-  constructor(type, gameController) {
+  constructor(type, gameController, allShips) {
     this.type = type;
-    this.gameboard = new Gameboard();
+    this.allShips = allShips;
+    this.gameboard = new Gameboard(this.allShips);
     this.gameController = gameController;
 
     // AI decisions
@@ -63,7 +64,9 @@ class ExtremeAI {
   }
 
   resetShipLengths() {
-    this.shipLengths = Array.from(this.player.gameboard.shipsPlaced);
+    this.shipLengths = Array.from(
+      this.player.gameboard.shipsPlaced.map((ship) => ship.length)
+    );
   }
 
   extremeDecide() {

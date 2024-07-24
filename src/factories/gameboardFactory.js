@@ -1,11 +1,12 @@
 import Ship from "./shipFactory.js";
 
 class Gameboard {
-  constructor() {
+  constructor(allShips) {
     this.coordinates;
     this.length;
     this.height;
     this.shipsPlaced = [];
+    this.allShips = allShips;
   }
 
   resetBoard(height, length) {
@@ -27,20 +28,22 @@ class Gameboard {
     }
   }
 
-  placeShip(location, length, rotation) {
+  placeShip(location, length, rotation, variant) {
     const ship = new Ship(length);
-    this.shipsPlaced.push(ship.length);
 
     const yLoc = location[0];
     const xLoc = location[1];
 
     if (!this.validPlacement(location, length, rotation)) return;
 
+    this.checkVariants(length, variant);
+    this.shipsPlaced.push({ length: ship.length, variant: variant });
+
     // Mark head of the ship
     this.coordinates[yLoc][xLoc].shipHead = {
       length: length,
       rotation: rotation,
-      variant: this.checkVariants(length),
+      variant: variant,
     };
 
     if (rotation === "horizontal") {
@@ -56,8 +59,55 @@ class Gameboard {
     }
   }
 
-  checkVariants(length) {
-    return this.shipsPlaced.filter((item) => item === length).length;
+  checkVariants(length, variant) {
+    console.log(this.shipsPlaced);
+    console.log(length, variant);
+
+    const index = this.shipsPlaced.findIndex(
+      (ship) => ship.length === length && ship.variant === variant
+    );
+
+    if (index !== -1) {
+      console.log("Exists!");
+      // Found existing ship
+      return this.deleteShip(length, variant)
+    }
+    console.log("DNE!");
+    // Ship was not found
+  }
+
+  deleteShip(length, variant) {
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.length; x++) {
+        const cell = this.coordinates[y][x];
+        if (
+          cell.shipHead &&
+          cell.shipHead.length === length &&
+          cell.shipHead.variant === variant
+        ) {
+          // Found the ship head, now delete the ship
+          const rotation = cell.shipHead.rotation;
+
+          if (rotation === "horizontal") {
+            for (let i = x; i < x + length; i++) {
+              if (i < this.length) {
+                this.coordinates[y][i].hasShip = null;
+                this.coordinates[y][i].shipHead = false;
+              }
+            }
+          } else if (rotation === "vertical") {
+            for (let i = y; i < y + length; i++) {
+              if (i < this.height) {
+                this.coordinates[i][x].hasShip = null;
+                this.coordinates[i][x].shipHead = false;
+              }
+            }
+          }
+          return true; // Ship found and deleted
+        }
+      }
+    }
+    return false; // Ship not found
   }
 
   validPlacement(location, length, rotation) {

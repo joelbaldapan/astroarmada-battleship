@@ -1,11 +1,12 @@
 import Player from "./factories/playerFactory.js";
 
 class GameController {
-  constructor(height, length) {
+  constructor(height, length, allShips) {
     this.height = height;
     this.length = length;
-    this.human = new Player("human", this);
-    this.computer = new Player("computer", this);
+    this.allShips = allShips;
+    this.human = new Player("human", this, this.allShips);
+    this.computer = new Player("computer", this, this.allShips);
 
     // Connect to renderController
     this.renderController;
@@ -87,7 +88,7 @@ class InitializeController {
     if (this.selectedShip)
       this.selectedShip.classList.remove("highlighted-ship");
     this.selectedShip = ship;
-    this.selectedShip.classList.add("highlighted-ship");
+    if (this.selectedShip) this.selectedShip.classList.add("highlighted-ship");
   }
 
   highlightShipPlacement(location, cellIndex) {
@@ -134,10 +135,14 @@ class InitializeController {
       this.gameController.human.gameboard.placeShip(
         location,
         length,
-        this.rotatationMode
+        this.rotatationMode,
+        this.selectedShip.id.charAt(2)
       );
       this.renderController.updateBoard();
     }
+
+    this.clearHighlightShipPlacement(location, cellIndex);
+    this.toggleSelectedShip(null);
   }
 }
 
@@ -152,12 +157,19 @@ class EventController {
     this.attackBtn = document.getElementById("attack-btn");
     this.startBtn = document.getElementById("start-btn");
     this.rotateBtn = document.getElementById("rotate-btn");
-    this.shipSettingsBtn = document.querySelectorAll(
+    this.shipSettingsBtns = document.querySelectorAll(
       ".ship-size-container img"
     );
+    this.shipSettingsBtnsArr = Array.from(this.shipSettingsBtns);
+
     this.settings = document.getElementById("settings");
 
-    this.gameController = new GameController(height, length);
+    this.gameController = new GameController(
+      height,
+      length,
+      this.processAllShips([...this.shipSettingsBtnsArr])
+    );
+
     this.renderController = new RenderController(this.gameController);
     this.initializeController = new InitializeController(
       this.gameController,
@@ -166,6 +178,20 @@ class EventController {
     this.gameController.renderController = this.renderController;
 
     this.setupEventListeners();
+  }
+
+  processAllShips(shipArray) {
+    const result = [];
+
+    shipArray.forEach((ship) => {
+      const cleanData = {
+        length: ship.id.charAt(0),
+        variant: ship.id.charAt(2),
+      };
+      result.push(cleanData);
+    });
+
+    return result;
   }
 
   setupEventListeners() {
@@ -199,7 +225,7 @@ class EventController {
       this.initializeController.toggleRotate();
     });
 
-    Array.from(this.shipSettingsBtn).forEach((shipSetting) => {
+    this.shipSettingsBtnsArr.forEach((shipSetting) => {
       shipSetting.addEventListener("click", () => {
         this.initializeController.toggleSelectedShip(shipSetting);
       });
@@ -430,11 +456,12 @@ class RenderController {
     const human = this.gameController.getHumanPlayer();
     const computer = this.gameController.getComputerPlayer();
 
-    // console.log("Human:", human.gameboard.coordinates);
+    console.log("Human:", human.gameboard.coordinates);
     // console.log("Computer:", computer.gameboard.coordinates);
 
-    console.log(eventController.initializeController.rotatationMode);
+    // console.log(eventController.initializeController.rotatationMode);
     console.log(eventController.initializeController.selectedShip);
+    console.log(this.gameController.human.gameboard.allShips);
   }
 }
 
