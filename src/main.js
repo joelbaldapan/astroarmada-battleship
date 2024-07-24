@@ -137,11 +137,6 @@ class EventController {
   constructor(height, length) {
     this.height = height;
     this.length = length;
-    this.restartBtn = document.getElementById("restart-btn");
-    this.consoleBtn = document.getElementById("console-btn");
-    this.renderBtn = document.getElementById("render-btn");
-    this.updateBtn = document.getElementById("update-btn");
-    this.attackBtn = document.getElementById("attack-btn");
     this.startBtn = document.getElementById("start-btn");
     this.rotateBtn = document.getElementById("rotate-btn");
     this.shipSettingsBtns = document.querySelectorAll(
@@ -182,18 +177,6 @@ class EventController {
   }
 
   setupEventListeners() {
-    this.restartBtn.addEventListener("click", () => {
-      this.gameController.restartGame();
-    });
-
-    this.consoleBtn.addEventListener("click", () => {
-      this.renderController.consoleLog();
-    });
-
-    this.renderBtn.addEventListener("click", () => {
-      this.renderController.updateBoard();
-    });
-
     this.startBtn.addEventListener("click", () => {
       this.renderController.renderBoard("computer");
       this.computerCells = document.querySelectorAll("#computer-board .cell");
