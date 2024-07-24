@@ -41,7 +41,7 @@ class GameController {
 
     // this.human.gameboard.placeShip([0, 0], 5, "horizontal"); //temp
     // this.human.gameboard.placeShip([5, 0], 2, "horizontal"); //temp
-    this.human.extremeAI.resetShipLengths();
+    this.human.probabilityAI.resetShipLengths();
   }
 
   attackComputer(verticalLoc, horizontalLoc) {
@@ -55,8 +55,8 @@ class GameController {
   attackPlayer() {
     const compChoice = this.human.decideAI("extreme"); // adjustable
     this.human.gameboard.receiveAttack(compChoice[0], compChoice[1]);
-    this.human.adjacentAI.checkAdjacentMode(compChoice);
-    this.human.extremeAI.checkSunkShip(compChoice);
+    this.human.probabilityAI.checkAdjacentMode();
+    this.human.probabilityAI.checkSunkShip(compChoice);
     this.renderController.updateBoard();
 
     if (this.human.gameboard.successfulAttack(compChoice[0], compChoice[1])) {
@@ -213,7 +213,7 @@ class EventController {
       this.computerCellsArr = [...this.computerCells];
 
       this.gameController.temporaryInitialize(); // TEMPORARY
-      this.gameController.human.extremeAI.resetShipLengths();
+      this.gameController.human.probabilityAI.resetShipLengths();
       this.renderController.updateBoard();
       this.settings.style.display = "none";
 
@@ -461,7 +461,8 @@ class RenderController {
 
     // console.log(eventController.initializeController.rotatationMode);
     console.log(eventController.initializeController.selectedShip);
-    console.log(this.gameController.human.gameboard.allShips);
+
+    console.log(human.probabilityAI.adjacentMode)
   }
 }
 

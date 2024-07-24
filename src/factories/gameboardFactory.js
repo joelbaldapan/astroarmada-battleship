@@ -60,19 +60,14 @@ class Gameboard {
   }
 
   checkVariants(length, variant) {
-    console.log(this.shipsPlaced);
-    console.log(length, variant);
-
     const index = this.shipsPlaced.findIndex(
       (ship) => ship.length === length && ship.variant === variant
     );
 
     if (index !== -1) {
-      console.log("Exists!");
       // Found existing ship
-      return this.deleteShip(length, variant)
+      return this.deleteShip(length, variant);
     }
-    console.log("DNE!");
     // Ship was not found
   }
 
@@ -146,6 +141,46 @@ class Gameboard {
       }
     }
     return true;
+  }
+
+  validAdjacent(location, length, rotation) {
+    const yLoc = location[0];
+    const xLoc = location[1];
+    let choice = 0;
+
+    if (rotation === "horizontal") {
+      for (let x = xLoc; x < xLoc + length; x++) {
+        const currentCell = this.coordinates[yLoc]?.[x];
+        if (currentCell === undefined || x >= this.length) return choice;
+
+        if (
+          currentCell.hasHit &&
+          currentCell.hasShip &&
+          !currentCell.hasShip.sunk
+        )
+          choice++;
+
+        if (currentCell.hasShip && currentCell.hasShip.sunk) return choice;
+      }
+    }
+
+    if (rotation === "vertical") {
+      for (let y = yLoc; y < yLoc + length; y++) {
+        const currentCell = this.coordinates[y]?.[xLoc];
+        if (currentCell === undefined || y >= this.height) return choice;
+
+        if (
+          currentCell.hasHit &&
+          currentCell.hasShip &&
+          !currentCell.hasShip.sunk
+        )
+          choice++;
+
+        if (currentCell.hasShip && currentCell.hasShip.sunk) return choice;
+      }
+    }
+
+    return choice;
   }
 
   validAttack(vertical, horizontal) {

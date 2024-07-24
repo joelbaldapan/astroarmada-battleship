@@ -8,8 +8,7 @@ class Player {
     this.gameController = gameController;
 
     // AI decisions
-    this.adjacentAI = new AdjacentAI(this);
-    this.extremeAI = new ExtremeAI(this);
+    this.probabilityAI = new probabilityAI(this);
   }
 
   // For AI
@@ -20,8 +19,8 @@ class Player {
       return this.randomDecide();
     }
 
-    if (this.adjacentAI.adjacentMode) {
-      return this.adjacentAI.adjacentDecide();
+    if (this.probabilityAI.adjacentMode) {
+      return this.probabilityAI.probabilityDecide("adjacent");
     }
 
     // Choose Adjacent AI (NORMAL) -- Random | Has adjacent mode
@@ -39,7 +38,7 @@ class Player {
 
     // Probability Map AI (EXTREME) -- Calculate proba map | Has adjacent mode
     if (difficulty === "extreme") {
-      return this.extremeAI.extremeDecide();
+      return this.probabilityAI.probabilityDecide("extreme");
     }
   }
 
@@ -56,11 +55,12 @@ class Player {
   }
 }
 
-class ExtremeAI {
+class probabilityAI {
   constructor(player) {
     this.player = player;
     this.shipLengths;
     this.directions = ["horizontal", "vertical"];
+    this.adjacentMode;
   }
 
   resetShipLengths() {
@@ -69,9 +69,9 @@ class ExtremeAI {
     );
   }
 
-  extremeDecide() {
+  probabilityDecide(type) {
     this.resetProbabilityMap();
-    this.updateProbabilityMap();
+    this.updateProbabilityMap(type);
     return this.getBestProbability();
   }
 
@@ -86,7 +86,27 @@ class ExtremeAI {
     }
   }
 
-  updateProbabilityMap() {
+  checkAdjacentMode() {
+    const length = this.player.gameboard.length;
+    const height = this.player.gameboard.height;
+    const gameboard = this.player.gameboard;
+    let stillDecide = true;
+
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < length; x++) {
+        const currentShip = this.player.gameboard.coordinates[y]?.[x]?.hasShip;
+        if (stillDecide)
+          if (!currentShip?.sunk && currentShip?.hits) {
+            this.adjacentMode = true;
+            stillDecide = false;
+          } else {
+            this.adjacentMode = false;
+          }
+      }
+    }
+  }
+
+  updateProbabilityMap(type) {
     const coords = this.player.gameboard.coordinates;
     const length = this.player.gameboard.length;
     const height = this.player.gameboard.height;
@@ -96,13 +116,35 @@ class ExtremeAI {
       this.directions.forEach((direction) => {
         for (let y = 0; y < height; y++) {
           for (let x = 0; x < length; x++) {
-            if (gameboard.validHitPlacement([y, x], shipLength, direction)) {
-              for (let i = 0; i < shipLength; i++) {
-                if (direction === "horizontal") {
-                  coords[y][x + i].probability++;
+            if (type === "extreme") {
+              if (gameboard.validHitPlacement([y, x], shipLength, direction)) {
+                for (let i = 0; i < shipLength; i++) {
+                  if (direction === "horizontal") {
+                    coords[y][x + i].probability++;
+                  }
+                  if (direction === "vertical") {
+                    coords[y + i][x].probability++;
+                  }
                 }
-                if (direction === "vertical") {
-                  coords[y + i][x].probability++;
+              }
+            } else if (type === "adjacent") {
+              const choice = gameboard.validAdjacent(
+                [y, x],
+                shipLength,
+                direction
+              );
+              if (choice) {
+                for (let i = 0; i < shipLength; i++) {
+                  if (direction === "horizontal") {
+                    if (coords[y]?.[x + i])
+                      if (!coords[y][x + i].hasHit)
+                        coords[y][x + i].probability += choice;
+                  }
+                  if (direction === "vertical") {
+                    if (coords[y + i]?.[x])
+                      if (!coords[y + i][x].hasHit)
+                        coords[y + i][x].probability += choice;
+                  }
                 }
               }
             }
@@ -134,7 +176,8 @@ class ExtremeAI {
         }
       }
     }
-
+    console.log(coords);
+    console.log(bestMove.location);
     return bestMove.location;
   }
 
@@ -143,101 +186,6 @@ class ExtremeAI {
     this.player.gameboard.coordinates.forEach((row) =>
       row.forEach((cell) => (cell.probability = 0))
     );
-  }
-}
-
-class AdjacentAI {
-  constructor(player) {
-    this.player = player;
-
-    this.adjacentMode = false;
-    this.checkHorizontal = null;
-    this.checkPositive = null;
-
-    this.originalPosition = null;
-    this.currentPosition = null;
-    this.tries = 0;
-  }
-
-  adjacentDecide() {
-    let index;
-    if (this.checkHorizontal) index = 1; // 0 = Horizontal
-    else index = 0; // 1 = Vertical
-
-    if (this.checkPositive) this.currentPosition[index]++;
-    else this.currentPosition[index]--;
-
-    // Check if the adjacent space is invalid
-    if (
-      !this.player.gameController.human.gameboard.validAttack(
-        this.currentPosition[0],
-        this.currentPosition[1]
-      )
-    ) {
-      this.adjacentMiss();
-      return this.player.decideAI("medium");
-    }
-
-    return this.currentPosition;
-  }
-
-  initalizeAdjacentDecide(currentLocation) {
-    // 50% chance of start checking horizontal/vertical
-    this.checkHorizontal = this.randomBoolean();
-
-    // 50% chance to start (positive) left-right, up-down | vice versa
-    this.checkPositive = this.randomBoolean();
-
-    this.adjacentMode = true;
-    this.originalPosition = Array.from(currentLocation);
-    this.currentPosition = Array.from(currentLocation);
-    this.tries = 5;
-  }
-
-  resetAdjacentMode() {
-    this.adjacentMode = false;
-    this.checkHorizontal = null;
-    this.checkPositive = null;
-
-    this.originalPosition = null;
-    this.currentPosition = null;
-    this.tries = 0;
-  }
-
-  checkAdjacentMode(location) {
-    if (
-      this.player.gameboard.coordinates[location[0]][location[1]].hasHit &&
-      this.player.gameboard.coordinates[location[0]][location[1]].hasShip
-    ) {
-      // Hit a ship. Initalize/keep adjacentMode
-      if (!this.adjacentMode) return this.initalizeAdjacentDecide(location);
-
-      // Found the direction on first try
-      if (this.tries >= 4) {
-        this.tries = 1;
-      }
-    } else {
-      // Missed, so evaluate what to do
-      this.adjacentMiss();
-    }
-  }
-
-  adjacentMiss() {
-    if (!this.tries) return this.resetAdjacentMode();
-
-    // After checking to the twice from both directions, then switch axis
-    if (this.tries === 3) {
-      this.checkHorizontal = !this.checkHorizontal;
-    } else {
-      this.checkPositive = !this.checkPositive;
-    }
-
-    this.tries--;
-    this.currentPosition = Array.from(this.originalPosition);
-  }
-
-  randomBoolean() {
-    return this.player.getRandomNumber(2) === 1;
   }
 }
 
