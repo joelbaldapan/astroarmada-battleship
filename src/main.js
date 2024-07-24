@@ -8,8 +8,10 @@ class GameController {
     this.human = new Player("human", this, this.allShips);
     this.computer = new Player("computer", this, this.allShips);
 
-    // Connect to renderController
+    // Connect to other controllers
     this.renderController;
+    this.audioController;
+    this.eventController;
   }
 
   getHumanPlayer() {
@@ -35,7 +37,9 @@ class GameController {
       return;
     this.computer.gameboard.receiveAttack(verticalLoc, horizontalLoc);
     if (!this.computer.gameboard.successfulAttack(verticalLoc, horizontalLoc))
-      this.attackPlayer();
+      setTimeout(() => {
+        this.attackPlayer();
+      }, 500); // Variable delay
   }
 
   attackPlayer() {
@@ -43,12 +47,15 @@ class GameController {
     this.human.gameboard.receiveAttack(compChoice[0], compChoice[1]);
     this.human.probabilityAI.checkAdjacentMode();
     this.human.probabilityAI.checkSunkShip(compChoice);
+    console.log(this.audioController);
+    this.audioController.playRandomAudio("attack");
     this.renderController.updateBoard();
 
+    this.eventController.startListenerTimer(500);
     if (this.human.gameboard.successfulAttack(compChoice[0], compChoice[1])) {
       setTimeout(() => {
         this.attackPlayer();
-      }, 200); // Variable delay
+      }, 500); // Variable delay
     }
   }
 }
@@ -134,6 +141,9 @@ class InitializeController {
 
 class EventController {
   constructor(height, length) {
+    this.listenerTimer = null;
+    this.listenerTimerActive = false;
+
     this.height = height;
     this.length = length;
     this.startBtn = document.getElementById("start-btn");
@@ -147,13 +157,12 @@ class EventController {
 
     this.settings = document.getElementById("settings");
 
+    this.audioController = new AudioController();
     this.gameController = new GameController(
       height,
       length,
-      this.processAllShips([...this.shipSettingsBtnsArr])
+      this.processAllShips([...this.shipSettingsBtnsArr], this.audioController)
     );
-
-    this.audioController = new AudioController();
     this.renderController = new RenderController(this.gameController);
     this.initializeController = new InitializeController(
       this.gameController,
@@ -161,6 +170,8 @@ class EventController {
       this.audioController
     );
     this.gameController.renderController = this.renderController;
+    this.gameController.audioController = this.audioController;
+    this.gameController.eventController = this;
 
     this.setupEventListeners();
   }
@@ -227,12 +238,14 @@ class EventController {
   setupComputerCellListeners() {
     this.computerCellsArr.forEach((cell) => {
       cell.addEventListener("click", () => {
-        const cellIndex = parseInt(cell.id.substring(5));
-        const verticalLoc = Math.floor(cellIndex / this.length);
-        const horizontalLoc = cellIndex % this.length;
-        this.gameController.attackComputer(verticalLoc, horizontalLoc);
-        this.renderController.updateBoard();
-        this.audioController.playRandomAudio("attack");
+        if (!this.listenerTimerActive) {
+          const cellIndex = parseInt(cell.id.substring(5));
+          const verticalLoc = Math.floor(cellIndex / this.length);
+          const horizontalLoc = cellIndex % this.length;
+          this.gameController.attackComputer(verticalLoc, horizontalLoc);
+          this.renderController.updateBoard();
+          this.audioController.playRandomAudio("attack");
+        }
       });
     });
   }
@@ -265,6 +278,14 @@ class EventController {
         this.audioController.playAudio("deploy");
       });
     });
+  }
+
+  startListenerTimer(time) {
+    this.listenerTimerActive = true;
+    clearTimeout(this.listenerTimer);
+    this.listenerTimer = setTimeout(() => {
+      this.listenerTimerActive = false;
+    }, time);
   }
 }
 
