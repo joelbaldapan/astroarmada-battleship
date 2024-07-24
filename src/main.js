@@ -54,7 +54,7 @@ class GameController {
 }
 
 class InitializeController {
-  constructor(gameController, renderController) {
+  constructor(gameController, renderController, audioController) {
     this.totalShips = [];
     this.rotatationMode = "vertical";
     this.selectedShip = null;
@@ -62,6 +62,7 @@ class InitializeController {
     // Connect to other controllers
     this.gameController = gameController;
     this.renderController = renderController;
+    this.audioController = audioController;
   }
 
   toggleRotate() {
@@ -125,10 +126,8 @@ class InitializeController {
       );
       this.clearHighlightShipPlacement(location, cellIndex);
       this.toggleSelectedShip(null);
-
-      setTimeout(() => {
-        this.renderController.updateBoard();
-      }, 10); // Variable delay
+      this.renderController.updateBoard();
+      this.audioController.playAudio("deploy");
     }
   }
 }
@@ -139,6 +138,8 @@ class EventController {
     this.length = length;
     this.startBtn = document.getElementById("start-btn");
     this.rotateBtn = document.getElementById("rotate-btn");
+    this.bgMusic = document.getElementById("bg-music");
+    this.musicBtn = document.getElementById("toggle-music");
     this.shipSettingsBtns = document.querySelectorAll(
       ".ship-size-container img"
     );
@@ -152,10 +153,12 @@ class EventController {
       this.processAllShips([...this.shipSettingsBtnsArr])
     );
 
+    this.audioController = new AudioController();
     this.renderController = new RenderController(this.gameController);
     this.initializeController = new InitializeController(
       this.gameController,
-      this.renderController
+      this.renderController,
+      this.audioController
     );
     this.gameController.renderController = this.renderController;
 
@@ -185,6 +188,7 @@ class EventController {
       this.gameController.initializeGame();
       this.renderController.updateBoard();
       this.settings.style.display = "none";
+      this.audioController.playAudio("startgame");
 
       // Set up computer cell listeners after getting computerCells array
       this.setupComputerCellListeners();
@@ -192,12 +196,22 @@ class EventController {
 
     this.rotateBtn.addEventListener("click", () => {
       this.initializeController.toggleRotate();
+      this.audioController.playAudio("click");
     });
 
     this.shipSettingsBtnsArr.forEach((shipSetting) => {
       shipSetting.addEventListener("click", () => {
         this.initializeController.toggleSelectedShip(shipSetting);
+        this.audioController.playAudio("select");
       });
+
+      shipSetting.addEventListener("mouseenter", () => {
+        this.audioController.playAudio("click");
+      });
+    });
+
+    this.musicBtn.addEventListener("click", () => {
+      this.audioController.toggleBGMusic(this.bgMusic, this.musicBtn);
     });
   }
 
@@ -218,6 +232,7 @@ class EventController {
         const horizontalLoc = cellIndex % this.length;
         this.gameController.attackComputer(verticalLoc, horizontalLoc);
         this.renderController.updateBoard();
+        this.audioController.playRandomAudio("attack");
       });
     });
   }
@@ -247,8 +262,40 @@ class EventController {
           [verticalLoc, horizontalLoc],
           cellIndex
         );
+        this.audioController.playAudio("deploy");
       });
     });
+  }
+}
+
+class AudioController {
+  constructor() {}
+
+  toggleBGMusic(bgMusic, musicBtn) {
+    if (bgMusic.paused) {
+      bgMusic.play();
+      musicBtn.textContent = "MUSIC: ON";
+    } else {
+      bgMusic.pause();
+      musicBtn.textContent = "MUSIC: OFF";
+    }
+  }
+
+  playRandomAudio(name) {
+    const sound = new Audio();
+    const number = this.getRandomNumber(4);
+    sound.src = `./assets/audio/${name}/${name}-${number}.mp3`;
+    sound.play();
+  }
+
+  playAudio(name) {
+    const sound = new Audio();
+    sound.src = `./assets/audio/${name}.mp3`;
+    sound.play();
+  }
+
+  getRandomNumber(max) {
+    return Math.floor(Math.random() * (max + 1));
   }
 }
 
