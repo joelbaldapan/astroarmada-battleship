@@ -305,13 +305,13 @@ class AudioController {
   playRandomAudio(name) {
     const sound = new Audio();
     const number = this.getRandomNumber(4);
-    sound.src = `/src/assets/audio/${name}/${name}-${number}.mp3`;
+    sound.src = `src/assets/audio/${name}/${name}-${number}.mp3`;
     sound.play();
   }
 
   playAudio(name, volume = 1) {
     const sound = new Audio();
-    sound.src = `/src/assets/audio/${name}.mp3`;
+    sound.src = `src/assets/audio/${name}.mp3`;
     sound.volume = volume;
     sound.play();
   }
@@ -449,7 +449,7 @@ class RenderController {
       shipImg.style.transform = `rotate(90deg)`;
     }
 
-    shipImg.src = `/src/assets/images/ships/${color}/${color}-${length}-${variant}.png`;
+    shipImg.src = `src/assets/images/ships/${color}/${color}-${length}-${variant}.png`;
     shipImg.classList.add("ship-img");
     return shipImg;
   }
@@ -457,9 +457,9 @@ class RenderController {
   updateCellHit(cell, cellIndex, boardId) {
     if (cell.hasHit) {
       const hitImg = document.createElement("img");
-      hitImg.src = "/src/assets/images/gameboard/hit.png";
+      hitImg.src = "src/assets/images/gameboard/hit.png";
       if (cell.hasShip)
-        hitImg.src = "/src/assets/images/gameboard/hit-and-ship.png";
+        hitImg.src = "src/assets/images/gameboard/hit-and-ship.png";
       hitImg.classList.add("hit-img");
 
       const targetCell = document.querySelector(
