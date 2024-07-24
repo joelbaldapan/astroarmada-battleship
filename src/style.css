@@ -16,8 +16,8 @@
   --font-main: "Helvetica", serif;
   --font-w-main: "Zilla Slab", serif;
 
-  --board-size: 40vw;
-  --board-size-small: 80vw;
+  --board-size: 35vw;
+  --board-size-small: 70vw;
 }
 
 * {
@@ -187,4 +187,5 @@ h2 {
 
 .highlighted-cell {
   background-color: var(--board-highlighted);
+  cursor: pointer;
 }

@@ -25,22 +25,8 @@ class GameController {
     this.computer.gameboard.resetBoard(this.height, this.length);
   }
 
-  temporaryInitialize() {
-    // FOR DEBUGGING CODE PURPOSES TEMPORARY
-    // this.computer.gameboard.placeShip([0, 1], 2, "horizontal"); //temp
-    // this.computer.gameboard.placeShip([2, 3], 3, "vertical"); //temp
-    // this.computer.gameboard.placeShip([6, 2], 5, "horizontal"); //temp
-    // this.computer.gameboard.placeShip([2, 8], 3, "vertical"); //temp
-    // this.computer.gameboard.placeShip([8, 4], 4, "horizontal"); //temp
-
-    // this.human.gameboard.placeShip([2, 1], 2, "vertical"); //temp
-    // this.human.gameboard.placeShip([2, 5], 3, "vertical"); //temp
-    // this.human.gameboard.placeShip([7, 0], 5, "horizontal"); //temp
-    // this.human.gameboard.placeShip([4, 8], 4, "vertical"); //temp
-    // this.human.gameboard.placeShip([9, 4], 3, "horizontal"); //temp
-
-    // this.human.gameboard.placeShip([0, 0], 5, "horizontal"); //temp
-    // this.human.gameboard.placeShip([5, 0], 2, "horizontal"); //temp
+  initializeGame() {
+    this.computer.initializeAIBoard();
     this.human.probabilityAI.resetShipLengths();
   }
 
@@ -70,7 +56,6 @@ class GameController {
 class InitializeController {
   constructor(gameController, renderController) {
     this.totalShips = [];
-    this.placedShips = [];
     this.rotatationMode = "vertical";
     this.selectedShip = null;
 
@@ -138,11 +123,13 @@ class InitializeController {
         this.rotatationMode,
         this.selectedShip.id.charAt(2)
       );
-      this.renderController.updateBoard();
-    }
+      this.clearHighlightShipPlacement(location, cellIndex);
+      this.toggleSelectedShip(null);
 
-    this.clearHighlightShipPlacement(location, cellIndex);
-    this.toggleSelectedShip(null);
+      setTimeout(() => {
+        this.renderController.updateBoard();
+      }, 10); // Variable delay
+    }
   }
 }
 
@@ -204,7 +191,7 @@ class EventController {
     });
 
     this.renderBtn.addEventListener("click", () => {
-      this.renderHumanBoard();
+      this.renderController.updateBoard();
     });
 
     this.startBtn.addEventListener("click", () => {
@@ -212,8 +199,7 @@ class EventController {
       this.computerCells = document.querySelectorAll("#computer-board .cell");
       this.computerCellsArr = [...this.computerCells];
 
-      this.gameController.temporaryInitialize(); // TEMPORARY
-      this.gameController.human.probabilityAI.resetShipLengths();
+      this.gameController.initializeGame();
       this.renderController.updateBoard();
       this.settings.style.display = "none";
 
@@ -362,8 +348,13 @@ class RenderController {
       } else {
         // If the image exists, remove it
         const shipImg = targetCell.querySelector(".ship-img");
-        if (shipImg) {
-          shipImg.remove();
+
+        if (shipImg !== null) {
+          console.log("GONNA REMOVE SMTH");
+          console.log(shipImg);
+          shipImg.style.display = "none";
+          targetCell.removeChild(shipImg);
+          targetCell.innerHTML = "";
         }
       }
     }
@@ -461,8 +452,10 @@ class RenderController {
 
     // console.log(eventController.initializeController.rotatationMode);
     console.log(eventController.initializeController.selectedShip);
+    console.log(eventController.initializeController.placedShips);
+    console.log(computer.allShips);
 
-    console.log(human.probabilityAI.adjacentMode)
+    // console.log(human.probabilityAI.adjacentMode)
   }
 }
 
