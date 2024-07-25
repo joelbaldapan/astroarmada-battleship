@@ -204,3 +204,11 @@ h2 {
   pointer-events: none; /* Ensure it doesn't interfere with clicks */
   z-index: 1; /* Ensure it's above the background but below other elements */
 }
+
+.target-img {
+  z-index: 60;
+  width: 90%;
+  height: 90%;
+  position: absolute;
+  opacity: 0.7;
+}

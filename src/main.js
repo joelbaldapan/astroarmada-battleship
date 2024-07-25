@@ -66,7 +66,7 @@ class GameController {
       )
     ) {
       setTimeout(() => {
-        this.prepareAttackPlayer();
+        this.attackPlayer();
       }, 500); // Variable delay
     }
   }
@@ -339,7 +339,23 @@ class RenderController {
     this.bestCoords;
   }
 
+  resetProbabilityTarget() {
+    const targets = document.querySelectorAll(".target-img");
+    Array.from(targets).forEach((target) => {
+      target.style.display = "none";
+      target.parentNode.removeChild(target);
+    });
+  }
+
+  renderProbabilityTarget(selectedCell) {
+    const targetImg = document.createElement("img");
+    targetImg.classList.add("target-img");
+    targetImg.src = `src/assets/images/gameboard/target.png`;
+    selectedCell.appendChild(targetImg);
+  }
+
   renderProbabilityMap(bestLoc) {
+    this.resetProbabilityTarget();
     const coords = this.gameController.human.gameboard.coordinates;
     const bestProbability = coords[bestLoc[0]][bestLoc[1]].probability;
 
@@ -351,20 +367,20 @@ class RenderController {
           `#human-board #cell-${cellIndex}`
         );
 
+        // Create and append a new overlay div
         const existingOverlay = selectedCell.querySelector(
           ".probability-overlay"
         );
-        if (existingOverlay) {
-          existingOverlay.remove();
-        }
-
-        // Create and append a new overlay div
+        if (existingOverlay) existingOverlay.remove();
         const overlay = document.createElement("div");
         overlay.className = "probability-overlay";
         overlay.style.filter = `brightness(${probabilityWeight * 2}) `;
-        selectedCell.style.position = "relative"; // Ensure positioning context for absolute child
+        selectedCell.style.position = "relative";
         selectedCell.appendChild(overlay);
 
+        if (cell.probability === bestProbability) {
+          this.renderProbabilityTarget(selectedCell);
+        }
         cellIndex++;
       })
     );
