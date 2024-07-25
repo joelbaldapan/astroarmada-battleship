@@ -56,8 +56,6 @@ class GameController {
     this.audioController.playRandomAudio("attack");
     this.renderController.updateBoard();
 
-    this.prepareAttackPlayer();
-
     this.eventController.startListenerTimer(500);
     if (
       this.human.gameboard.successfulAttack(
@@ -69,6 +67,7 @@ class GameController {
         this.attackPlayer();
       }, 500); // Variable delay
     }
+    this.prepareAttackPlayer();
   }
 }
 

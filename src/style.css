@@ -1,3 +1,15 @@
+@font-face {
+  font-family: "AldercyPixel";
+  src: url(/src/assets/fonts/AldercyPixelDemoRegular-nAgdg.otf)
+    format("opentype");
+}
+
+@font-face {
+  font-family: "NapzerPixel";
+  src: url(/src/assets/fonts/NapzerPixelDemoRegular-aYyLa.otf)
+    format("opentype");
+}
+
 :root {
   --w-pri-dark: #3e10b3;
   --w-pri-light: #5400fd;
@@ -11,10 +23,10 @@
 
   --highlighted: #411cff;
 
-  --w-text: #cddbec;
+  --w-text: #dee8f4;
 
-  --font-main: "Helvetica", serif;
-  --font-w-main: "Zilla Slab", serif;
+  --font-header: "AldercyPixel", serif;
+  --font-text: "NapzerPixel", serif;
 
   --board-size: 35vw;
   --board-size-small: 70vw;
@@ -31,7 +43,7 @@ body {
   width: 100%;
   background: var(--w-background);
   color: var(--w-text);
-  font-family: var(--font-main);
+  font-family: var(--font-text);
 }
 
 body {
@@ -40,6 +52,32 @@ body {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+h1 {
+  font-size: 4rem;
+  font-family: var(--font-header);
+  line-height: 0.8;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 12rem;
+}
+
+footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 12rem;
 }
 
 .gameboard {
@@ -103,14 +141,6 @@ body {
   -webkit-filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
   filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white)
     brightness(1.5);
-}
-
-h1 {
-  font-size: 4rem;
-}
-
-h2 {
-  font-size: 2rem;
 }
 
 #full-game-container {
