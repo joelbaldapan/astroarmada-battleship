@@ -203,6 +203,14 @@ class EventController {
   }
 
   setupEventListeners() {
+    let musicLoaded = false;
+    document.addEventListener("click", () => {
+      if (musicLoaded === false) {
+        this.audioController.toggleBGMusic(this.bgMusic, this.musicBtn);
+        musicLoaded = true;
+      }
+    });
+
     this.startBtn.addEventListener("click", () => {
       this.renderController.renderBoard("computer");
       this.computerCells = document.querySelectorAll("#computer-board .cell");
