@@ -7,6 +7,7 @@ class GameController {
     this.allShips = allShips;
     this.human = new Player("human", this, this.allShips);
     this.computer = new Player("computer", this, this.allShips);
+    this.compChoice;
 
     // Connect to other controllers
     this.renderController;
@@ -30,6 +31,7 @@ class GameController {
   initializeGame() {
     this.computer.initializeAIBoard();
     this.human.probabilityAI.resetShipLengths();
+    this.prepareAttackPlayer();
   }
 
   attackComputer(verticalLoc, horizontalLoc) {
@@ -42,21 +44,29 @@ class GameController {
       }, 500); // Variable delay
   }
 
+  prepareAttackPlayer() {
+    this.compChoice = this.human.decideAI("extreme"); // adjustable
+    this.renderController.renderProbabilityMap(this.compChoice);
+  }
+
   attackPlayer() {
-    const compChoice = this.human.decideAI("extreme"); // adjustable
-
-    this.renderController.renderProbabilityMap(compChoice);
-
-    this.human.gameboard.receiveAttack(compChoice[0], compChoice[1]);
+    this.human.gameboard.receiveAttack(this.compChoice[0], this.compChoice[1]);
     this.human.probabilityAI.checkAdjacentMode();
-    this.human.probabilityAI.checkSunkShip(compChoice);
+    this.human.probabilityAI.checkSunkShip(this.compChoice);
     this.audioController.playRandomAudio("attack");
     this.renderController.updateBoard();
 
+    this.prepareAttackPlayer();
+
     this.eventController.startListenerTimer(500);
-    if (this.human.gameboard.successfulAttack(compChoice[0], compChoice[1])) {
+    if (
+      this.human.gameboard.successfulAttack(
+        this.compChoice[0],
+        this.compChoice[1]
+      )
+    ) {
       setTimeout(() => {
-        this.attackPlayer();
+        this.prepareAttackPlayer();
       }, 500); // Variable delay
     }
   }
@@ -328,13 +338,10 @@ class RenderController {
     this.gameController = gameController;
     this.bestCoords;
   }
-  
-  
 
   renderProbabilityMap(bestLoc) {
     const coords = this.gameController.human.gameboard.coordinates;
     const bestProbability = coords[bestLoc[0]][bestLoc[1]].probability;
-    console.log(coords);
 
     let cellIndex = 0;
     coords.forEach((row) =>
@@ -342,12 +349,6 @@ class RenderController {
         const probabilityWeight = cell.probability / bestProbability;
         const selectedCell = document.querySelector(
           `#human-board #cell-${cellIndex}`
-        );
-        console.log(
-          selectedCell,
-          cell.probability,
-          bestProbability,
-          probabilityWeight
         );
 
         const existingOverlay = selectedCell.querySelector(
