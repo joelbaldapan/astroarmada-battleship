@@ -220,10 +220,14 @@ button:active {
   /* temporary */
 }
 
+.human-ship.sunk-img {
+  filter: brightness(0.3);
+}
+
 .sunk-img {
   -webkit-filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
   filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white)
-    brightness(1.5);
+  brightness(1.2)
 }
 
 #full-game-container {

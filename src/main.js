@@ -469,6 +469,7 @@ class RenderController {
 
       if (cell.hasShip && cell.shipHead) {
         const shipImg = this.createShipImg(cell, cellIndex, boardId);
+        shipImg.classList.add("human-ship");
         targetCell.appendChild(shipImg);
       } else {
         // If the image exists, remove it
@@ -491,7 +492,7 @@ class RenderController {
       const targetImg = document.querySelector(
         `#${boardId} #cell-${cellIndex} img`
       );
-      targetImg.style.opacity = 0.1;
+      targetImg.style.opacity = 0.05;
     }
 
     if (cell.hasShip?.sunk && cell.shipHead) {
@@ -522,6 +523,10 @@ class RenderController {
 
     shipImg.src = `src/assets/images/ships/${color}/${color}-${length}-${variant}.png`;
     shipImg.classList.add("ship-img");
+
+    if (boardId === "human-board") {
+      shipImg.classList.add("human-ship");
+    }
     return shipImg;
   }
 
