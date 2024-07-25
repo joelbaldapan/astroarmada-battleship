@@ -44,10 +44,12 @@ class GameController {
 
   attackPlayer() {
     const compChoice = this.human.decideAI("extreme"); // adjustable
+
+    this.renderController.renderProbabilityMap(compChoice);
+
     this.human.gameboard.receiveAttack(compChoice[0], compChoice[1]);
     this.human.probabilityAI.checkAdjacentMode();
     this.human.probabilityAI.checkSunkShip(compChoice);
-    console.log(this.audioController);
     this.audioController.playRandomAudio("attack");
     this.renderController.updateBoard();
 
@@ -324,6 +326,47 @@ class AudioController {
 class RenderController {
   constructor(gameController) {
     this.gameController = gameController;
+    this.bestCoords;
+  }
+  
+  
+
+  renderProbabilityMap(bestLoc) {
+    const coords = this.gameController.human.gameboard.coordinates;
+    const bestProbability = coords[bestLoc[0]][bestLoc[1]].probability;
+    console.log(coords);
+
+    let cellIndex = 0;
+    coords.forEach((row) =>
+      row.forEach((cell) => {
+        const probabilityWeight = cell.probability / bestProbability;
+        const selectedCell = document.querySelector(
+          `#human-board #cell-${cellIndex}`
+        );
+        console.log(
+          selectedCell,
+          cell.probability,
+          bestProbability,
+          probabilityWeight
+        );
+
+        const existingOverlay = selectedCell.querySelector(
+          ".probability-overlay"
+        );
+        if (existingOverlay) {
+          existingOverlay.remove();
+        }
+
+        // Create and append a new overlay div
+        const overlay = document.createElement("div");
+        overlay.className = "probability-overlay";
+        overlay.style.filter = `brightness(${probabilityWeight * 2}) `;
+        selectedCell.style.position = "relative"; // Ensure positioning context for absolute child
+        selectedCell.appendChild(overlay);
+
+        cellIndex++;
+      })
+    );
   }
 
   updateHighlightPlacement(cellIndex, length, rotation) {
@@ -402,8 +445,6 @@ class RenderController {
         const shipImg = targetCell.querySelector(".ship-img");
 
         if (shipImg !== null) {
-          console.log("GONNA REMOVE SMTH");
-          console.log(shipImg);
           shipImg.style.display = "none";
           targetCell.removeChild(shipImg);
           targetCell.innerHTML = "";

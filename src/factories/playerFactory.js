@@ -24,7 +24,6 @@ class Player {
     if (this.getRandomNumber(2)) direction = "horizontal";
 
     if (this.gameboard.validPlacement(location, length, direction)) {
-      console.log(location, length, direction, ship.variant);
       this.gameboard.placeShip(location, length, direction, ship.variant);
     } else this.initializeShips(ship);
   }
@@ -194,8 +193,6 @@ class probabilityAI {
         }
       }
     }
-    console.log(coords);
-    console.log(bestMove.location);
     return bestMove.location;
   }
 
