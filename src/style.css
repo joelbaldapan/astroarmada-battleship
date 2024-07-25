@@ -84,12 +84,12 @@ footer {
 
 button:hover {
   cursor: pointer;
-  filter: brightness(0.8)
+  filter: brightness(0.8);
 }
 
 button:active {
   cursor: pointer;
-  filter: brightness(1)
+  filter: brightness(1);
 }
 
 #toggle-options {
@@ -246,16 +246,25 @@ button:active {
   align-content: center;
 }
 
+#settings-label {
+  font-size: max(2.3vw, 20px);
+}
+
 #ships-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   align-content: center;
+  padding: 1vw;
+}
+
+.horizontal {
+  transform: rotate(90deg);
 }
 
 #ships-container img {
-  width: min(5vw, 60px);
+  width: min(5vw, 50px);
 }
 
 #ships-container img:hover,
@@ -311,7 +320,7 @@ button:active {
   }
 
   #ships-container img {
-    width: 10vw;
+    width: 8vw;
   }
 }
 

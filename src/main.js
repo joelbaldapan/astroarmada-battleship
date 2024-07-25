@@ -84,8 +84,14 @@ class InitializeController {
   }
 
   toggleRotate() {
-    if (this.rotatationMode === "vertical") this.rotatationMode = "horizontal";
-    else this.rotatationMode = "vertical";
+    const shipContainer = document.getElementById("ships-container");
+    if (this.rotatationMode === "vertical") {
+      this.rotatationMode = "horizontal";
+      shipContainer.classList.add("horizontal");
+    } else {
+      this.rotatationMode = "vertical";
+      shipContainer.classList.remove("horizontal");
+    }
   }
 
   toggleSelectedShip(ship) {
