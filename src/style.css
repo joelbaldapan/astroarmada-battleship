@@ -1,13 +1,12 @@
 @font-face {
   font-family: "AldercyPixel";
-  src: url(/src/assets/fonts/AldercyPixelDemoRegular-nAgdg.otf)
+  src: url(src/assets/fonts/AldercyPixelDemoRegular-nAgdg.otf)
     format("opentype");
 }
 
 @font-face {
   font-family: "NapzerPixel";
-  src: url(/src/assets/fonts/NapzerPixelDemoRegular-aYyLa.otf)
-    format("opentype");
+  src: url(src/assets/fonts/NapzerPixelDemoRegular-aYyLa.otf) format("opentype");
 }
 
 :root {
@@ -28,7 +27,7 @@
   --font-header: "AldercyPixel", serif;
   --font-text: "NapzerPixel", serif;
 
-  --board-size: min(40vw, 470px);
+  --board-size: min(40vw, 450px);
   --board-size-small: 70vw;
 }
 
