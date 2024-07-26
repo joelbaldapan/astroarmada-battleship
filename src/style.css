@@ -133,6 +133,7 @@ button:active {
   background-color: var(--w-pri-dark);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
+  width: 18rem;
 
   outline: none;
   border: 0.2rem solid var(--board-outline);
@@ -145,6 +146,7 @@ button:active {
   background-color: var(--w-pri-dark);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
+  width: 12rem;
 
   outline: none;
   border: 0.2rem solid var(--board-outline);
@@ -157,6 +159,7 @@ button:active {
   background-color: var(--w-pri-dark);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
+  width: 10rem;
 
   outline: none;
   border: 0.2rem solid var(--board-outline);
@@ -221,13 +224,15 @@ button:active {
 }
 
 .human-ship.sunk-img {
-  filter: brightness(0.3);
+  -webkit-filter: drop-shadow(1px 1px 0 black) drop-shadow(-1px -1px 0 black);
+  filter: drop-shadow(1px 1px 0 black) drop-shadow(-1px -1px 0 black)
+    brightness(0.3);
 }
 
 .sunk-img {
   -webkit-filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
   filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white)
-  brightness(1.2)
+    brightness(1.2);
 }
 
 #full-game-container {
@@ -321,6 +326,21 @@ button:active {
     width: var(--board-size-small);
     height: var(--board-size-small);
     border: 0.5vw solid var(--board-outline);
+  }
+
+  #toggle-probability {
+    font-size: 0.9rem;
+    width: 15rem;
+  }
+
+  #toggle-targets {
+    font-size: 0.9rem;
+    width: 11rem;
+  }
+
+  #toggle-music {
+    font-size: 0.9rem;
+    width: 9rem;
   }
 
   #ships-container img {

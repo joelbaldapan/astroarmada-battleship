@@ -173,7 +173,10 @@ class EventController {
     this.shipSettingsBtnsArr = Array.from(this.shipSettingsBtns);
 
     this.settings = document.getElementById("settings");
+    this.probabilityBtn = document.getElementById("toggle-probability");
+    this.targetsBtn = document.getElementById("toggle-targets");
 
+    // Controllers
     this.audioController = new AudioController();
     this.gameController = new GameController(
       height,
@@ -214,6 +217,30 @@ class EventController {
         this.audioController.toggleBGMusic(this.bgMusic, this.musicBtn);
         musicLoaded = true;
       }
+    });
+
+    this.probabilityBtn.addEventListener("click", () => {
+      if (this.renderController.showProbabilityMap) {
+        this.renderController.showProbabilityMap = false;
+        this.probabilityBtn.textContent = "PROBABILITY MAP: OFF";
+      } else {
+        this.renderController.showProbabilityMap = true;
+        this.probabilityBtn.textContent = "PROBABILITY MAP: ON";
+      }
+
+      this.renderController.updateProbabilityTargets();
+    });
+
+    this.targetsBtn.addEventListener("click", () => {
+      if (this.renderController.showTargets) {
+        this.renderController.showTargets = false;
+        this.targetsBtn.textContent = "TARGETS: OFF";
+      } else {
+        this.renderController.showTargets = true;
+        this.targetsBtn.textContent = "TARGETS: ON";
+      }
+
+      this.renderController.updateProbabilityTargets();
     });
 
     this.startBtn.addEventListener("click", () => {
@@ -350,6 +377,33 @@ class RenderController {
   constructor(gameController) {
     this.gameController = gameController;
     this.bestCoords;
+    this.showProbabilityMap = true;
+    this.showTargets = true;
+  }
+
+  updateProbabilityTargets() {
+    const probabilityMaps = document.querySelectorAll(".probability-overlay");
+    const targets = document.querySelectorAll(".target-img");
+
+    if (this.showProbabilityMap) {
+      Array.from(probabilityMaps).forEach((overlay) => {
+        overlay.style.display = "block";
+      });
+    } else {
+      Array.from(probabilityMaps).forEach((overlay) => {
+        overlay.style.display = "none";
+      });
+    }
+
+    if (this.showTargets) {
+      Array.from(targets).forEach((target) => {
+        target.style.display = "block";
+      });
+    } else {
+      Array.from(targets).forEach((target) => {
+        target.style.display = "none";
+      });
+    }
   }
 
   resetProbabilityTarget() {
@@ -397,6 +451,8 @@ class RenderController {
         cellIndex++;
       })
     );
+
+    this.updateProbabilityTargets();
   }
 
   updateHighlightPlacement(cellIndex, length, rotation) {
