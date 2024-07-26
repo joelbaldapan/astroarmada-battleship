@@ -23,6 +23,8 @@
 
   --highlighted: #411cff;
 
+  --t-size-button: 1rem;
+  --t-size-button-small: 1rem;
   --w-text: #dee8f4;
 
   --font-header: "AldercyPixel", serif;
@@ -115,7 +117,7 @@ button:active {
 }
 
 #rotate-btn {
-  font-size: 1rem;
+  font-size: var(--t-size-button);
   font-family: var(--font-header);
   background-color: var(--w-pri-dark);
   padding: 0.5rem 1.5rem;
@@ -127,7 +129,7 @@ button:active {
 }
 
 #toggle-probability {
-  font-size: 1rem;
+  font-size: var(--t-size-button);
   font-family: var(--font-header);
   background-color: var(--w-pri-dark);
   padding: 0.5rem 1.5rem;
@@ -140,7 +142,7 @@ button:active {
 }
 
 #toggle-targets {
-  font-size: 1rem;
+  font-size: var(--t-size-button);
   font-family: var(--font-header);
   background-color: var(--w-pri-dark);
   padding: 0.5rem 1.5rem;
@@ -153,7 +155,7 @@ button:active {
 }
 
 #toggle-music {
-  font-size: 1rem;
+  font-size: var(--t-size-button);
   font-family: var(--font-header);
   background-color: var(--w-pri-dark);
   padding: 0.5rem 1.5rem;
@@ -255,7 +257,7 @@ button:active {
 }
 
 #settings-label {
-  font-size: max(2.3vw, 20px);
+  font-size: max(2vw, 20px);
 }
 
 #ships-container {
@@ -328,18 +330,18 @@ button:active {
   }
 
   #toggle-probability {
-    font-size: 0.9rem;
-    width: 15rem;
+    font-size: var(--t-size-button-small);
+    width: 16.5rem;
   }
 
   #toggle-targets {
-    font-size: 0.9rem;
-    width: 11rem;
+    font-size: var(--t-size-button-small);
+    width: 11.5rem;
   }
 
   #toggle-music {
-    font-size: 0.9rem;
-    width: 9rem;
+    font-size: var(--t-size-button-small);
+    width: 10rem;
   }
 
   #ships-container img {
@@ -390,7 +392,7 @@ button:active {
 
 .label {
   font-family: var(--font-header);
-  font-size: 1.5rem;
+  font-size: 2.3rem;
   text-align: center;
   margin-top: 1rem;
   margin-bottom: 0.2rem;
