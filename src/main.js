@@ -74,7 +74,12 @@ class GameController {
 }
 
 class InitializeController {
-  constructor(gameController, renderController, audioController) {
+  constructor(
+    gameController,
+    renderController,
+    audioController,
+    eventController
+  ) {
     this.rotatationMode = "vertical";
     this.selectedShip = null;
 
@@ -82,6 +87,7 @@ class InitializeController {
     this.gameController = gameController;
     this.renderController = renderController;
     this.audioController = audioController;
+    this.eventController = eventController;
   }
 
   toggleRotate() {
@@ -104,6 +110,7 @@ class InitializeController {
 
   highlightShipPlacement(location, cellIndex) {
     if (this.selectedShip === null) return;
+    this.renderController.toggleShipPointerEvents(false);
     const length = +this.selectedShip.id.charAt(0);
 
     if (
@@ -156,11 +163,48 @@ class InitializeController {
         this.rotatationMode,
         variant
       );
+      this.eventController.recentlyPlacedShip = true;
+      this.renderController.toggleShipPointerEvents(true);
       this.clearHighlightShipPlacement(location, cellIndex);
       this.renderController.updateShipSettings(length, variant);
       this.toggleSelectedShip(null);
       this.renderController.updateBoard();
       this.audioController.playAudio("deploy", 0.8);
+    }
+  }
+
+  movePlacedShip(cellData, verticalLoc, horizontalLoc) {
+    if (cellData.hasShip) {
+      // Find the ship head
+      let shipHeadCell = cellData;
+      let shipHeadVertical = verticalLoc;
+      let shipHeadHorizontal = horizontalLoc;
+
+      while (!shipHeadCell.shipHead) {
+        if (cellData.hasShip.rotation === "horizontal") {
+          shipHeadHorizontal--;
+        } else {
+          shipHeadVertical--;
+        }
+        shipHeadCell =
+          this.gameController.human.gameboard.coordinates[shipHeadVertical][
+            shipHeadHorizontal
+          ];
+      }
+
+      // Get ship details from the head
+      const length = shipHeadCell.shipHead.length;
+      const variant = shipHeadCell.shipHead.variant;
+
+      const shipImg = document.getElementById(`${length}-${variant}-board`);
+      this.toggleSelectedShip(shipImg);
+
+      // Update the board visually
+      this.renderController.updateBoard();
+      this.renderController.updateShipSettings();
+
+      // Play a sound effect if needed
+      this.audioController.playAudio("select", 0.8);
     }
   }
 }
@@ -196,11 +240,14 @@ class EventController {
     this.initializeController = new InitializeController(
       this.gameController,
       this.renderController,
-      this.audioController
+      this.audioController,
+      this
     );
     this.gameController.renderController = this.renderController;
     this.gameController.audioController = this.audioController;
     this.gameController.eventController = this;
+
+    this.recentlyPlacedShip = false;
 
     this.setupEventListeners();
   }
@@ -294,20 +341,34 @@ class EventController {
     this.humanCells = document.querySelectorAll("#human-board .cell");
     this.humanCellsArr = [...this.humanCells];
     this.setupHumanCellListeners();
+    this.setupPlacedShipListeners();
   }
 
-  setupComputerCellListeners() {
-    this.computerCellsArr.forEach((cell) => {
-      cell.addEventListener("click", () => {
-        if (!this.listenerTimerActive) {
-          const cellIndex = parseInt(cell.id.substring(5));
-          const verticalLoc = Math.floor(cellIndex / this.length);
-          const horizontalLoc = cellIndex % this.length;
-          this.gameController.attackComputer(verticalLoc, horizontalLoc);
-          this.renderController.updateBoard();
-          this.audioController.playRandomAudio("attack");
-        }
-      });
+  setupPlacedShipListeners() {
+    const humanBoard = document.getElementById("human-board");
+
+    humanBoard.addEventListener("click", (event) => {
+      if (this.recentlyPlacedShip) {
+        this.recentlyPlacedShip = false;
+        return;
+      }
+
+      const clickedCell = event.target.closest(".cell");
+      if (!clickedCell) return;
+
+      const cellIndex = parseInt(clickedCell.id.substring(5));
+      const verticalLoc = Math.floor(cellIndex / this.gameController.length);
+      const horizontalLoc = cellIndex % this.gameController.length;
+      const cellData =
+        this.gameController.human.gameboard.coordinates[verticalLoc][
+          horizontalLoc
+        ];
+
+      this.initializeController.movePlacedShip(
+        cellData,
+        verticalLoc,
+        horizontalLoc
+      );
     });
   }
 
@@ -390,12 +451,25 @@ class RenderController {
     this.showTargets = true;
   }
 
+  toggleShipPointerEvents(toggleOn) {
+    const shipElements = document.getElementsByClassName("ship-img");
+
+    Array.from(shipElements).forEach((ship) => {
+      if (toggleOn) {
+        setTimeout(() => {
+          ship.style.pointerEvents = "all";
+        }, 500);
+      } else {
+        ship.style.pointerEvents = "none";
+      }
+    });
+  }
+
   updateShipSettings() {
     const shipsPlaced = this.gameController.human.gameboard.shipsPlaced;
     const allShips = this.gameController.allShips;
 
     // Remove all ship-placed class
-    console.log(allShips);
     allShips.forEach((ship) => {
       const shipElement = document.getElementById(
         `${ship.length}-${ship.variant}`
@@ -404,7 +478,6 @@ class RenderController {
     });
 
     // Add ship-placed class
-    console.log(shipsPlaced);
     shipsPlaced.forEach((ship) => {
       const shipElement = document.getElementById(
         `${ship.length}-${ship.variant}`
@@ -640,6 +713,7 @@ class RenderController {
     }
 
     shipImg.src = `src/assets/images/ships/${color}/${color}-${length}-${variant}.png`;
+    shipImg.id = `${length}-${variant}-board`;
     shipImg.classList.add("ship-img");
 
     if (boardId === "human-board") {
