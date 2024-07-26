@@ -7,6 +7,7 @@ class GameController {
     this.allShips = allShips;
     this.human = new Player("human", this, this.allShips);
     this.computer = new Player("computer", this, this.allShips);
+    this.shipsPlaced = this.human.gameboard.shipsPlaced;
     this.compChoice;
 
     // Connect to other controllers
@@ -37,6 +38,7 @@ class GameController {
   attackComputer(verticalLoc, horizontalLoc) {
     if (!this.computer.gameboard.validAttack(verticalLoc, horizontalLoc))
       return;
+    this.eventController.startListenerTimer(500);
     this.computer.gameboard.receiveAttack(verticalLoc, horizontalLoc);
     if (!this.computer.gameboard.successfulAttack(verticalLoc, horizontalLoc))
       setTimeout(() => {
@@ -56,13 +58,13 @@ class GameController {
     this.audioController.playRandomAudio("attack");
     this.renderController.updateBoard();
 
-    this.eventController.startListenerTimer(500);
     if (
       this.human.gameboard.successfulAttack(
         this.compChoice[0],
         this.compChoice[1]
       )
     ) {
+      this.eventController.startListenerTimer(500);
       setTimeout(() => {
         this.attackPlayer();
       }, 500); // Variable delay
@@ -73,7 +75,6 @@ class GameController {
 
 class InitializeController {
   constructor(gameController, renderController, audioController) {
-    this.totalShips = [];
     this.rotatationMode = "vertical";
     this.selectedShip = null;
 
@@ -117,12 +118,18 @@ class InitializeController {
         length,
         this.rotatationMode
       );
+    } else {
+      this.renderController.updateInvalidHighlightPlacement(
+        cellIndex,
+        length,
+        this.rotatationMode
+      );
     }
   }
 
   clearHighlightShipPlacement(location, cellIndex) {
     if (this.selectedShip === null) return;
-    const length = +this.selectedShip.id.charAt(0);
+    const length = +this.selectedShip.id.charAt(0); // Length
 
     this.renderController.updateClearHighlightPlacement(
       cellIndex,
@@ -134,6 +141,7 @@ class InitializeController {
   confirmShipPlacement(location, cellIndex) {
     if (this.selectedShip === null) return;
     const length = +this.selectedShip.id.charAt(0);
+    const variant = this.selectedShip.id.charAt(2);
 
     if (
       this.gameController.human.gameboard.validPlacement(
@@ -146,9 +154,10 @@ class InitializeController {
         location,
         length,
         this.rotatationMode,
-        this.selectedShip.id.charAt(2)
+        variant
       );
       this.clearHighlightShipPlacement(location, cellIndex);
+      this.renderController.updateShipSettings(length, variant);
       this.toggleSelectedShip(null);
       this.renderController.updateBoard();
       this.audioController.playAudio("deploy", 0.8);
@@ -381,6 +390,29 @@ class RenderController {
     this.showTargets = true;
   }
 
+  updateShipSettings() {
+    const shipsPlaced = this.gameController.human.gameboard.shipsPlaced;
+    const allShips = this.gameController.allShips;
+
+    // Remove all ship-placed class
+    console.log(allShips);
+    allShips.forEach((ship) => {
+      const shipElement = document.getElementById(
+        `${ship.length}-${ship.variant}`
+      );
+      shipElement.classList.remove("ship-placed");
+    });
+
+    // Add ship-placed class
+    console.log(shipsPlaced);
+    shipsPlaced.forEach((ship) => {
+      const shipElement = document.getElementById(
+        `${ship.length}-${ship.variant}`
+      );
+      shipElement.classList.add("ship-placed");
+    });
+  }
+
   toggleSettingsDisplay() {
     const settingsContainer = document.getElementById("settings-container");
     const computerContainer = document.getElementById("computer-container");
@@ -482,11 +514,32 @@ class RenderController {
     }
   }
 
+  updateInvalidHighlightPlacement(cellIndex, length, rotation) {
+    if (rotation === "horizontal") {
+      for (let i = cellIndex; i < cellIndex + length; i++) {
+        if (i !== cellIndex && i % 10 === 0) return;
+        const selectedCell = document.querySelector(`#human-board #cell-${i}`);
+        selectedCell.classList.add("invalid-cell");
+      }
+    }
+
+    if (rotation === "vertical") {
+      for (let i = 0; i < length; i++) {
+        const adjustedIndex = cellIndex + i * this.gameController.length;
+        const selectedCell = document.querySelector(
+          `#human-board #cell-${adjustedIndex}`
+        );
+        if (selectedCell) selectedCell.classList.add("invalid-cell");
+      }
+    }
+  }
+
   updateClearHighlightPlacement(cellIndex, length, rotation) {
     if (rotation === "horizontal") {
       for (let i = cellIndex; i < cellIndex + length; i++) {
         const selectedCell = document.querySelector(`#human-board #cell-${i}`);
         selectedCell.classList.remove("highlighted-cell");
+        selectedCell.classList.remove("invalid-cell");
       }
     }
 
@@ -497,6 +550,7 @@ class RenderController {
           `#human-board #cell-${adjustedIndex}`
         );
         selectedCell.classList.remove("highlighted-cell");
+        selectedCell.classList.remove("invalid-cell");
       }
     }
   }

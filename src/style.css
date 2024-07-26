@@ -19,6 +19,7 @@
 
   --board-background: #080227;
   --board-highlighted: #4a29ee;
+  --board-invalid: #ee2936;
   --board-outline: #d2d0da32;
 
   --highlighted: #411cff;
@@ -213,6 +214,7 @@ button:active {
   width: 100%;
   object-fit: contain;
   transform-origin: top center;
+  pointer-events: none;
 }
 
 .hit-img {
@@ -275,6 +277,10 @@ button:active {
 
 #ships-container img {
   width: min(5vw, 50px);
+}
+
+.ship-placed {
+  filter: brightness(0.4);
 }
 
 #ships-container img:hover,
@@ -351,6 +357,11 @@ button:active {
 
 .highlighted-cell {
   background-color: var(--board-highlighted);
+  cursor: pointer;
+}
+
+.invalid-cell {
+  background-color: var(--board-invalid);
   cursor: pointer;
 }
 
