@@ -1,12 +1,13 @@
 @font-face {
   font-family: "AldercyPixel";
-  src: url(src/assets/fonts/AldercyPixelDemoRegular-nAgdg.otf)
+  src: url(../src/assets/fonts/AldercyPixelDemoRegular-nAgdg.otf)
     format("opentype");
 }
 
 @font-face {
   font-family: "NapzerPixel";
-  src: url(src/assets/fonts/NapzerPixelDemoRegular-aYyLa.otf) format("opentype");
+  src: url(../src/assets/fonts/NapzerPixelDemoRegular-aYyLa.otf)
+    format("opentype");
 }
 
 :root {
