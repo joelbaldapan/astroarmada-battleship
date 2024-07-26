@@ -28,27 +28,38 @@
       </div>
 
       <div id="full-game-container">
-        <div id="gameboard-container"></div>
-        <div id="settings">
-          <h2 id="settings-label">Place your ships...</h2>
-          <div id="ships-container">
-            <div class="ship-size-container">
-              <img id="5-1" src="src/assets/images/ships/red/red-5-1.png" />
-            </div>
-            <div class="ship-size-container">
-              <img id="4-1" src="src/assets/images/ships/red/red-4-1.png" />
-            </div>
-            <div class="ship-size-container">
-              <img id="3-2" src="src/assets/images/ships/red/red-3-2.png" />
-            </div>
-            <div class="ship-size-container">
-              <img id="3-1" src="src/assets/images/ships/red/red-3-1.png" />
-            </div>
-            <div class="ship-size-container">
-              <img id="2-1" src="src/assets/images/ships/red/red-2-1.png" />
+        <div id="gameboard-container">
+          <!-- Gameboards will be inserted here by JavaScript -->
+          <div id="human-container"><span class="label">Your Board</span></div>
+
+          <div id="computer-container">
+            <span class="label">Opponent's Board</span>
+          </div>
+
+          <div id="settings-container">
+            <span class="label">Opponent's Board</span>
+            <div id="settings">
+              <h2 id="settings-label">Place your ships...</h2>
+              <div id="ships-container">
+                <div class="ship-size-container">
+                  <img id="5-1" src="src/assets/images/ships/red/red-5-1.png" />
+                </div>
+                <div class="ship-size-container">
+                  <img id="4-1" src="src/assets/images/ships/red/red-4-1.png" />
+                </div>
+                <div class="ship-size-container">
+                  <img id="3-2" src="src/assets/images/ships/red/red-3-2.png" />
+                </div>
+                <div class="ship-size-container">
+                  <img id="3-1" src="src/assets/images/ships/red/red-3-1.png" />
+                </div>
+                <div class="ship-size-container">
+                  <img id="2-1" src="src/assets/images/ships/red/red-2-1.png" />
+                </div>
+              </div>
+              <button id="rotate-btn">Rotate</button>
             </div>
           </div>
-          <button id="rotate-btn">Rotate</button>
         </div>
       </div>
     </main>

@@ -250,7 +250,7 @@ class EventController {
 
       this.gameController.initializeGame();
       this.renderController.updateBoard();
-      this.settings.style.display = "none";
+      this.renderController.toggleSettingsDisplay();
       this.audioController.playAudio("startgame");
 
       // Set up computer cell listeners after getting computerCells array
@@ -379,6 +379,14 @@ class RenderController {
     this.bestCoords;
     this.showProbabilityMap = true;
     this.showTargets = true;
+  }
+
+  toggleSettingsDisplay() {
+    const settingsContainer = document.getElementById("settings-container");
+    const computerContainer = document.getElementById("computer-container");
+
+    settingsContainer.style.display = "none";
+    computerContainer.style.display = "flex";
   }
 
   updateProbabilityTargets() {
@@ -605,7 +613,7 @@ class RenderController {
 
   renderBoard(player) {
     // Gameboard
-    const gameboardContainer = document.getElementById("gameboard-container");
+    const gameboardContainer = document.getElementById(`${player}-container`);
     const gameboard = document.createElement("div");
     gameboard.className = "gameboard";
     gameboard.id = `${player}-board`;
