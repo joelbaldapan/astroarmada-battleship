@@ -248,6 +248,7 @@ class EventController {
     this.gameController.eventController = this;
 
     this.recentlyPlacedShip = false;
+    this.gameStarted = false;
 
     this.setupEventListeners();
   }
@@ -304,6 +305,8 @@ class EventController {
       this.computerCells = document.querySelectorAll("#computer-board .cell");
       this.computerCellsArr = [...this.computerCells];
 
+      this.gameStarted = true;
+      this.renderController.togglePlacedShipHover(false);
       this.gameController.initializeGame();
       this.renderController.updateBoard();
       this.renderController.toggleSettingsDisplay();
@@ -348,6 +351,8 @@ class EventController {
     const humanBoard = document.getElementById("human-board");
 
     humanBoard.addEventListener("click", (event) => {
+      if (this.gameStarted) return;
+
       if (this.recentlyPlacedShip) {
         this.recentlyPlacedShip = false;
         return;
@@ -401,6 +406,21 @@ class EventController {
     });
   }
 
+  setupComputerCellListeners() {
+    this.computerCellsArr.forEach((cell) => {
+      cell.addEventListener("click", () => {
+        if (!this.listenerTimerActive) {
+          const cellIndex = parseInt(cell.id.substring(5));
+          const verticalLoc = Math.floor(cellIndex / this.length);
+          const horizontalLoc = cellIndex % this.length;
+          this.gameController.attackComputer(verticalLoc, horizontalLoc);
+          this.renderController.updateBoard();
+          this.audioController.playRandomAudio("attack");
+        }
+      });
+    });
+  }
+
   startListenerTimer(time) {
     this.listenerTimerActive = true;
     clearTimeout(this.listenerTimer);
@@ -449,6 +469,17 @@ class RenderController {
     this.bestCoords;
     this.showProbabilityMap = true;
     this.showTargets = true;
+  }
+
+  togglePlacedShipHover(toggleOn) {
+    const shipElements = document.getElementsByClassName("ship-img");
+    Array.from(shipElements).forEach((ship) => {
+      if (toggleOn) {
+        ship.classList.remove("no-hover");
+      } else {
+        ship.classList.add("no-hover");
+      }
+    });
   }
 
   toggleShipPointerEvents(toggleOn) {
@@ -659,6 +690,9 @@ class RenderController {
       );
 
       if (cell.hasShip && cell.shipHead) {
+        const checkShipImg = targetCell.querySelector(".ship-img");
+        if (checkShipImg) return;
+
         const shipImg = this.createShipImg(cell, cellIndex, boardId);
         shipImg.classList.add("human-ship");
         targetCell.appendChild(shipImg);
@@ -666,7 +700,7 @@ class RenderController {
         // If the image exists, remove it
         const shipImg = targetCell.querySelector(".ship-img");
 
-        if (shipImg !== null) {
+        if (shipImg) {
           shipImg.style.display = "none";
           targetCell.removeChild(shipImg);
           targetCell.innerHTML = "";
