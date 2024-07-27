@@ -45,7 +45,7 @@ class GameController {
     this.renderController.togglePlacedShipHover(false);
     this.renderController.renderStartBtn("RESTART GAME");
     this.renderController.updateTextDisplay(
-      "Commander, seek and destroy every enemy's battleships!"
+      "Commander, seek and destroy all the enemy's battleships!"
     );
     this.prepareAttackPlayer();
   }
@@ -64,7 +64,7 @@ class GameController {
       );
     if (this.wonGame === "computer")
       this.renderController.updateTextDisplay(
-        "Tough break, admiral... Your fleet drifts defeated in the cosmic winds."
+        "Tough break, admiral. Your fleet drifts defeated in the cosmic winds..."
       );
   }
 
@@ -78,6 +78,7 @@ class GameController {
     this.audioController.playRandomAudio("attack");
     this.checkLose();
 
+    if (this.wonGame) return;
     if (!this.computer.gameboard.successfulAttack(verticalLoc, horizontalLoc))
       setTimeout(() => {
         this.attackPlayer();
@@ -120,7 +121,7 @@ class GameController {
       startBtn.disabled = false;
       startBtn.classList.remove("disabled-btn");
       this.renderController.updateTextDisplay(
-        "Astro armada, positioned and deployed. Press START to engage your offenses..!"
+        "Astro armada, ready and positioned..! Press START to engage your offenses."
       );
     } else {
       startBtn.disabled = true;
@@ -362,8 +363,9 @@ class EventController {
         this.setupComputerCellListeners();
 
         this.gameController.initializeGame();
-        this.renderController.updateBoard();
+        this.initializeController.toggleSelectedShip(null);
         this.renderController.toggleSettingsDisplay(true);
+        this.renderController.updateBoard();
         this.audioController.playAudio("startgame");
       } else {
         // RESTART GAME
@@ -466,11 +468,11 @@ class EventController {
   setupComputerCellListeners() {
     this.computerCellsArr.forEach((cell) => {
       cell.addEventListener("click", () => {
-        console.log(this.listenerTimerActive);
         if (this.listenerTimerActive) return;
         const cellIndex = parseInt(cell.id.substring(5));
         const verticalLoc = Math.floor(cellIndex / this.length);
         const horizontalLoc = cellIndex % this.length;
+        console.log(verticalLoc, horizontalLoc);
         this.gameController.attackComputer(verticalLoc, horizontalLoc);
         this.renderController.updateBoard();
       });
