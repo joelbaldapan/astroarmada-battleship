@@ -44,9 +44,15 @@ class Gameboard {
     const xLoc = location[1];
 
     if (!this.validPlacement(location, length, rotation)) return;
-
     this.checkVariants(length, variant);
-    this.shipsPlaced.push({ length: ship.length, variant: variant });
+
+    // Push in shipsPlaced if not yet inside
+    const isAlreadyPlaced = this.shipsPlaced.some(
+      (ship) => ship.length === length && ship.variant === variant
+    );
+    console.log(isAlreadyPlaced);
+    if (!isAlreadyPlaced)
+      this.shipsPlaced.push({ length: ship.length, variant: variant });
 
     // Mark head of the ship
     this.coordinates[yLoc][xLoc].shipHead = {

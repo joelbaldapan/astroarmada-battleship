@@ -7,7 +7,6 @@ class GameController {
     this.allShips = allShips;
     this.human = new Player("human", this, this.allShips);
     this.computer = new Player("computer", this, this.allShips);
-    this.shipsPlaced = this.human.gameboard.shipsPlaced;
     this.compChoice;
     this.gameStarted = false;
     this.wonGame;
@@ -36,9 +35,7 @@ class GameController {
     this.renderController.renderBoard("human");
     this.renderController.togglePlacedShipHover(true);
     this.renderController.renderStartBtn("START GAME");
-    this.renderController.updateTextDisplay(
-      "Admiral, deploy your stellar fleets for battle."
-    );
+    this.checkCompletePlacedShips();
   }
 
   initializeGame() {
@@ -47,6 +44,9 @@ class GameController {
     this.human.probabilityAI.resetShipLengths();
     this.renderController.togglePlacedShipHover(false);
     this.renderController.renderStartBtn("RESTART GAME");
+    this.renderController.updateTextDisplay(
+      "Commander, seek and destroy every enemy's battleships!"
+    );
     this.prepareAttackPlayer();
   }
 
@@ -110,6 +110,25 @@ class GameController {
       }, 500); // Variable delay
     }
     this.prepareAttackPlayer();
+  }
+
+  checkCompletePlacedShips() {
+    const shipsPlaced = this.human.gameboard.shipsPlaced;
+    console.log(shipsPlaced.length, this.allShips.length);
+    const startBtn = document.getElementById("start-btn");
+    if (shipsPlaced.length === this.allShips.length) {
+      startBtn.disabled = false;
+      startBtn.classList.remove("disabled-btn");
+      this.renderController.updateTextDisplay(
+        "Astro armada, positioned and deployed. Press START to engage your offenses..!"
+      );
+    } else {
+      startBtn.disabled = true;
+      startBtn.classList.add("disabled-btn");
+      this.renderController.updateTextDisplay(
+        "Admiral, deploy your stellar fleets for battle."
+      );
+    }
   }
 }
 
@@ -208,6 +227,7 @@ class InitializeController {
       this.clearHighlightShipPlacement(location, cellIndex);
       this.renderController.updateShipSettings(length, variant);
       this.toggleSelectedShip(null);
+      this.gameController.checkCompletePlacedShips();
       this.renderController.updateBoard();
       this.audioController.playAudio("deploy", 0.8);
     }
@@ -302,7 +322,7 @@ class EventController {
 
     shipArray.forEach((ship) => {
       const cleanData = {
-        length: ship.id.charAt(0),
+        length: Number(ship.id.charAt(0)),
         variant: ship.id.charAt(2),
       };
       result.push(cleanData);
@@ -554,6 +574,9 @@ class RenderController {
     const shipsPlaced = this.gameController.human.gameboard.shipsPlaced;
     const allShips = this.gameController.allShips;
 
+    console.log(shipsPlaced);
+    console.log(allShips);
+
     // Remove all ship-placed class
     allShips.forEach((ship) => {
       const shipElement = document.getElementById(
@@ -734,8 +757,8 @@ class RenderController {
         const selectedCell = document.querySelector(
           `#human-board #cell-${adjustedIndex}`
         );
-        selectedCell.classList.remove("highlighted-cell");
-        selectedCell.classList.remove("invalid-cell");
+        if (selectedCell) selectedCell.classList.remove("highlighted-cell");
+        if (selectedCell) selectedCell.classList.remove("invalid-cell");
       }
     }
   }

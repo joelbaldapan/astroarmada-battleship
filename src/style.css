@@ -11,11 +11,8 @@
 }
 
 :root {
-  --w-pri-dark: #3e10b3;
-  --w-pri-light: #5400fd;
-  --w-sec: #da3fa9;
-  --w-accent: #d5cc17;
   --w-background: #040115;
+  --w-text: #dee8f4;
 
   --board-background: #080227;
   --board-highlighted: #4a29ee;
@@ -26,7 +23,9 @@
 
   --t-size-button: 1rem;
   --t-size-button-small: 1rem;
-  --w-text: #dee8f4;
+
+  --b-bg-color: #3e10b3;
+  --b-disabled: #15063b;
 
   --font-header: "AldercyPixel", serif;
   --font-text: "NapzerPixel", serif;
@@ -113,7 +112,7 @@ button:active {
 #start-btn {
   font-size: 1.5rem;
   font-family: var(--font-header);
-  background-color: var(--w-pri-dark);
+  background-color: var(--b-bg-color);
   padding: 1rem 3rem;
   color: var(--w-text);
 
@@ -125,7 +124,7 @@ button:active {
 #rotate-btn {
   font-size: var(--t-size-button);
   font-family: var(--font-header);
-  background-color: var(--w-pri-dark);
+  background-color: var(--b-bg-color);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
 
@@ -137,7 +136,7 @@ button:active {
 #toggle-probability {
   font-size: var(--t-size-button);
   font-family: var(--font-header);
-  background-color: var(--w-pri-dark);
+  background-color: var(--b-bg-color);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
   width: 18rem;
@@ -150,7 +149,7 @@ button:active {
 #toggle-targets {
   font-size: var(--t-size-button);
   font-family: var(--font-header);
-  background-color: var(--w-pri-dark);
+  background-color: var(--b-bg-color);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
   width: 12rem;
@@ -163,7 +162,7 @@ button:active {
 #toggle-music {
   font-size: var(--t-size-button);
   font-family: var(--font-header);
-  background-color: var(--w-pri-dark);
+  background-color: var(--b-bg-color);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
   width: 10rem;
@@ -434,4 +433,9 @@ button:active {
   text-align: center;
   margin-top: 1rem;
   margin-bottom: 0.2rem;
+}
+
+.disabled-btn {
+  background-color: var(--b-disabled) !important;
+  cursor: not-allowed !important;
 }
