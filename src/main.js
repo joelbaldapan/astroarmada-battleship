@@ -9,6 +9,7 @@ class GameController {
     this.computer = new Player("computer", this, this.allShips);
     this.shipsPlaced = this.human.gameboard.shipsPlaced;
     this.compChoice;
+    this.gameStarted = false;
     this.wonGame;
 
     // Connect to other controllers
@@ -26,20 +27,32 @@ class GameController {
   }
 
   restartGame() {
+    this.gameStarted = false;
+    this.compChoice;
+    this.wonGame;
     this.human.gameboard.resetBoard(this.height, this.length);
     this.computer.gameboard.resetBoard(this.height, this.length);
+    this.renderController.deleteRenderBoards();
+    this.renderController.renderBoard("human");
+    this.renderController.togglePlacedShipHover(true);
+    this.renderController.renderStartBtn("START GAME");
+    this.renderController.updateTextDisplay(
+      "Admiral, deploy your stellar fleets for battle."
+    );
   }
 
   initializeGame() {
+    this.gameStarted = true;
     this.computer.initializeAIBoard();
     this.human.probabilityAI.resetShipLengths();
+    this.renderController.togglePlacedShipHover(false);
+    this.renderController.renderStartBtn("RESTART GAME");
     this.prepareAttackPlayer();
   }
 
   checkLose() {
     if (this.computer.gameboard.checkLoseBoard()) this.wonGame = "human";
     if (this.human.gameboard.checkLoseBoard()) this.wonGame = "computer";
-    console.log(this.wonGame);
 
     if (this.wonGame) {
       this.renderController.toggleTargets(true);
@@ -222,6 +235,9 @@ class InitializeController {
       // Get ship details from the head
       const length = shipHeadCell.shipHead.length;
       const variant = shipHeadCell.shipHead.variant;
+      this.rotatationMode = shipHeadCell.shipHead.rotation;
+      this.toggleRotate();
+      this.toggleRotate();
 
       const shipImg = document.getElementById(`${length}-${variant}-board`);
       this.toggleSelectedShip(shipImg);
@@ -255,6 +271,7 @@ class EventController {
     this.settings = document.getElementById("settings");
     this.probabilityBtn = document.getElementById("toggle-probability");
     this.targetsBtn = document.getElementById("toggle-targets");
+    this.recentlyPlacedShip = false;
 
     // Controllers
     this.audioController = new AudioController();
@@ -274,11 +291,9 @@ class EventController {
     this.gameController.audioController = this.audioController;
     this.gameController.eventController = this;
 
-    this.recentlyPlacedShip = false;
-    this.gameStarted = false;
-
-    this.consoleBtn = document.getElementById("console-btn"); // Temp console
-
+    // Initialize
+    this.gameController.restartGame(this.height, this.length);
+    this.initializeListeners();
     this.setupEventListeners();
   }
 
@@ -305,10 +320,6 @@ class EventController {
       }
     });
 
-    this.consoleBtn.addEventListener("click", () => {
-      this.renderController.consoleLog();
-    });
-
     this.probabilityBtn.addEventListener("click", () => {
       if (this.gameController.wonGame) return;
       this.renderController.toggleProbabilityMap();
@@ -322,18 +333,27 @@ class EventController {
     });
 
     this.startBtn.addEventListener("click", () => {
-      this.renderController.renderBoard("computer");
-      this.computerCells = document.querySelectorAll("#computer-board .cell");
-      this.computerCellsArr = [...this.computerCells];
+      if (this.listenerTimerActive) return;
+      if (!this.gameController.gameStarted) {
+        this.renderController.renderBoard("computer");
+        this.computerCells = document.querySelectorAll("#computer-board .cell");
+        this.computerCellsArr = [...this.computerCells];
+        console.log(this.computerCellsArr);
+        this.setupComputerCellListeners();
 
-      this.gameStarted = true;
-      this.gameController.initializeGame();
-      this.renderController.updateBoard();
-      this.renderController.toggleSettingsDisplay();
-      this.audioController.playAudio("startgame");
-
-      // Set up computer cell listeners after getting computerCells array
-      this.setupComputerCellListeners();
+        this.gameController.initializeGame();
+        this.renderController.updateBoard();
+        this.renderController.toggleSettingsDisplay(true);
+        this.audioController.playAudio("startgame");
+      } else {
+        // RESTART GAME
+        this.gameController.restartGame(this.height, this.length);
+        this.initializeListeners();
+        this.initializeController.toggleSelectedShip(null);
+        this.renderController.updateShipSettings();
+        this.renderController.toggleSettingsDisplay(false);
+        this.audioController.playAudio("startgame");
+      }
     });
 
     this.rotateBtn.addEventListener("click", () => {
@@ -357,10 +377,7 @@ class EventController {
     });
   }
 
-  renderHumanBoard() {
-    this.gameController.restartGame(this.height, this.length);
-    this.renderController.renderBoard("human");
-
+  initializeListeners() {
     this.humanCells = document.querySelectorAll("#human-board .cell");
     this.humanCellsArr = [...this.humanCells];
     this.setupHumanCellListeners();
@@ -371,7 +388,7 @@ class EventController {
     const humanBoard = document.getElementById("human-board");
 
     humanBoard.addEventListener("click", (event) => {
-      if (this.gameStarted) return;
+      if (this.gameController.gameStarted) return;
 
       if (this.recentlyPlacedShip) {
         this.recentlyPlacedShip = false;
@@ -429,13 +446,13 @@ class EventController {
   setupComputerCellListeners() {
     this.computerCellsArr.forEach((cell) => {
       cell.addEventListener("click", () => {
-        if (!this.listenerTimerActive) {
-          const cellIndex = parseInt(cell.id.substring(5));
-          const verticalLoc = Math.floor(cellIndex / this.length);
-          const horizontalLoc = cellIndex % this.length;
-          this.gameController.attackComputer(verticalLoc, horizontalLoc);
-          this.renderController.updateBoard();
-        }
+        console.log(this.listenerTimerActive);
+        if (this.listenerTimerActive) return;
+        const cellIndex = parseInt(cell.id.substring(5));
+        const verticalLoc = Math.floor(cellIndex / this.length);
+        const horizontalLoc = cellIndex % this.length;
+        this.gameController.attackComputer(verticalLoc, horizontalLoc);
+        this.renderController.updateBoard();
       });
     });
   }
@@ -490,6 +507,19 @@ class RenderController {
     this.showTargets = true;
   }
 
+  deleteRenderBoards() {
+    const humanBoard = document.getElementById("human-board");
+    const computerBoard = document.getElementById("computer-board");
+
+    if (humanBoard) humanBoard.remove();
+    if (computerBoard) computerBoard.remove();
+  }
+
+  renderStartBtn(text) {
+    const startBtn = document.getElementById("start-btn");
+    startBtn.textContent = text;
+  }
+
   updateTextDisplay(text) {
     const textDisplay = document.getElementById("text-display");
     textDisplay.textContent = text;
@@ -541,12 +571,17 @@ class RenderController {
     });
   }
 
-  toggleSettingsDisplay() {
+  toggleSettingsDisplay(toggleOn) {
     const settingsContainer = document.getElementById("settings-container");
     const computerContainer = document.getElementById("computer-container");
 
-    settingsContainer.style.display = "none";
-    computerContainer.style.display = "flex";
+    if (toggleOn) {
+      settingsContainer.style.display = "none";
+      computerContainer.style.display = "flex";
+    } else {
+      settingsContainer.style.display = "flex";
+      computerContainer.style.display = "none";
+    }
   }
 
   updateProbabilityTargets() {
@@ -727,8 +762,6 @@ class RenderController {
         });
       });
     });
-
-    this.togglePlacedShipHover(false);
   }
 
   updateCellShowShip(cell, cellIndex, boardId) {
@@ -848,19 +881,7 @@ class RenderController {
   consoleLog() {
     const human = this.gameController.getHumanPlayer();
     const computer = this.gameController.getComputerPlayer();
-
-    console.log("Human:", human.gameboard.coordinates);
-    // console.log("Computer:", computer.gameboard.coordinates);
-
-    // console.log(eventController.initializeController.rotatationMode);
-    // console.log(eventController.initializeController.selectedShip);
-    // console.log(eventController.initializeController.placedShips);
-    // console.log(computer.allShips);
-
-    // console.log(human.probabilityAI.adjacentMode)
-    console.log(this.gameController.human.gameboard);
   }
 }
 
 const eventController = new EventController(10, 10);
-eventController.renderHumanBoard();
