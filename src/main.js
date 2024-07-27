@@ -250,6 +250,8 @@ class EventController {
     this.recentlyPlacedShip = false;
     this.gameStarted = false;
 
+    this.consoleBtn = document.getElementById("console-btn"); // Temp console
+
     this.setupEventListeners();
   }
 
@@ -274,6 +276,10 @@ class EventController {
         this.audioController.toggleBGMusic(this.bgMusic, this.musicBtn);
         musicLoaded = true;
       }
+    });
+
+    this.consoleBtn.addEventListener("click", () => {
+      this.renderController.consoleLog();
     });
 
     this.probabilityBtn.addEventListener("click", () => {
