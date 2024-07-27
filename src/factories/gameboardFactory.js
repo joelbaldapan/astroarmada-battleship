@@ -28,6 +28,18 @@ class Gameboard {
     }
   }
 
+  checkLose() {
+    console.log("---");
+    const isLose = this.coordinates.every((row) =>
+      row.every((cell) => !cell.hasShip || (cell.hasShip && cell.hasShip.sunk))
+    );
+
+    console.log(isLose);
+
+    if (isLose) return true;
+    else return false;
+  }
+
   placeShip(location, length, rotation, variant) {
     const ship = new Ship(length);
 

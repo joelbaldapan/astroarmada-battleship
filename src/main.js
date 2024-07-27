@@ -9,6 +9,7 @@ class GameController {
     this.computer = new Player("computer", this, this.allShips);
     this.shipsPlaced = this.human.gameboard.shipsPlaced;
     this.compChoice;
+    this.wonGame = null;
 
     // Connect to other controllers
     this.renderController;
@@ -40,6 +41,8 @@ class GameController {
       return;
     this.eventController.startListenerTimer(500);
     this.computer.gameboard.receiveAttack(verticalLoc, horizontalLoc);
+
+    if (this.computer.gameboard.checkLose()) this.wonGame = "human";
     if (!this.computer.gameboard.successfulAttack(verticalLoc, horizontalLoc))
       setTimeout(() => {
         this.attackPlayer();
@@ -53,6 +56,8 @@ class GameController {
 
   attackPlayer() {
     this.human.gameboard.receiveAttack(this.compChoice[0], this.compChoice[1]);
+
+    if (this.human.gameboard.checkLose()) this.wonGame = "computer";
     this.human.probabilityAI.checkAdjacentMode();
     this.human.probabilityAI.checkSunkShip(this.compChoice);
     this.audioController.playRandomAudio("attack");
@@ -811,11 +816,12 @@ class RenderController {
     // console.log("Computer:", computer.gameboard.coordinates);
 
     // console.log(eventController.initializeController.rotatationMode);
-    console.log(eventController.initializeController.selectedShip);
-    console.log(eventController.initializeController.placedShips);
-    console.log(computer.allShips);
+    // console.log(eventController.initializeController.selectedShip);
+    // console.log(eventController.initializeController.placedShips);
+    // console.log(computer.allShips);
 
     // console.log(human.probabilityAI.adjacentMode)
+    console.log(this.gameController.human.gameboard);
   }
 }
 
