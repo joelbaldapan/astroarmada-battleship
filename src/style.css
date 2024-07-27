@@ -180,6 +180,14 @@ button:active {
   display: grid;
   grid-gap: 0.25vw;
   border: 0.2vw solid var(--board-outline);
+
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .cell {
