@@ -9,7 +9,7 @@ class GameController {
     this.computer = new Player("computer", this, this.allShips);
     this.shipsPlaced = this.human.gameboard.shipsPlaced;
     this.compChoice;
-    this.wonGame = null;
+    this.wonGame;
 
     // Connect to other controllers
     this.renderController;
@@ -36,13 +36,35 @@ class GameController {
     this.prepareAttackPlayer();
   }
 
+  checkLose() {
+    if (this.computer.gameboard.checkLoseBoard()) this.wonGame = "human";
+    if (this.human.gameboard.checkLoseBoard()) this.wonGame = "computer";
+    console.log(this.wonGame);
+
+    if (this.wonGame) {
+      this.renderController.toggleTargets(true);
+      this.renderController.toggleProbabilityMap(true);
+    }
+    if (this.wonGame === "human")
+      this.renderController.updateTextDisplay(
+        "Mission accomplished, admiral. Your fleet reigns supreme across the galaxy..!"
+      );
+    if (this.wonGame === "computer")
+      this.renderController.updateTextDisplay(
+        "Tough break, admiral... Your fleet drifts defeated in the cosmic winds."
+      );
+  }
+
   attackComputer(verticalLoc, horizontalLoc) {
+    if (this.wonGame) return; // If game ended, then don't do anything
+
     if (!this.computer.gameboard.validAttack(verticalLoc, horizontalLoc))
       return;
     this.eventController.startListenerTimer(500);
     this.computer.gameboard.receiveAttack(verticalLoc, horizontalLoc);
+    this.audioController.playRandomAudio("attack");
+    this.checkLose();
 
-    if (this.computer.gameboard.checkLose()) this.wonGame = "human";
     if (!this.computer.gameboard.successfulAttack(verticalLoc, horizontalLoc))
       setTimeout(() => {
         this.attackPlayer();
@@ -56,18 +78,18 @@ class GameController {
 
   attackPlayer() {
     this.human.gameboard.receiveAttack(this.compChoice[0], this.compChoice[1]);
-
-    if (this.human.gameboard.checkLose()) this.wonGame = "computer";
     this.human.probabilityAI.checkAdjacentMode();
     this.human.probabilityAI.checkSunkShip(this.compChoice);
     this.audioController.playRandomAudio("attack");
     this.renderController.updateBoard();
+    this.checkLose();
 
     if (
       this.human.gameboard.successfulAttack(
         this.compChoice[0],
         this.compChoice[1]
-      )
+      ) &&
+      !this.wonGame
     ) {
       this.eventController.startListenerTimer(500);
       setTimeout(() => {
@@ -288,26 +310,14 @@ class EventController {
     });
 
     this.probabilityBtn.addEventListener("click", () => {
-      if (this.renderController.showProbabilityMap) {
-        this.renderController.showProbabilityMap = false;
-        this.probabilityBtn.textContent = "PROBABILITY MAP: OFF";
-      } else {
-        this.renderController.showProbabilityMap = true;
-        this.probabilityBtn.textContent = "PROBABILITY MAP: ON";
-      }
-
+      if (this.gameController.wonGame) return;
+      this.renderController.toggleProbabilityMap();
       this.renderController.updateProbabilityTargets();
     });
 
     this.targetsBtn.addEventListener("click", () => {
-      if (this.renderController.showTargets) {
-        this.renderController.showTargets = false;
-        this.targetsBtn.textContent = "TARGETS: OFF";
-      } else {
-        this.renderController.showTargets = true;
-        this.targetsBtn.textContent = "TARGETS: ON";
-      }
-
+      if (this.gameController.wonGame) return;
+      this.renderController.toggleTargets();
       this.renderController.updateProbabilityTargets();
     });
 
@@ -317,7 +327,6 @@ class EventController {
       this.computerCellsArr = [...this.computerCells];
 
       this.gameStarted = true;
-      this.renderController.togglePlacedShipHover(false);
       this.gameController.initializeGame();
       this.renderController.updateBoard();
       this.renderController.toggleSettingsDisplay();
@@ -426,7 +435,6 @@ class EventController {
           const horizontalLoc = cellIndex % this.length;
           this.gameController.attackComputer(verticalLoc, horizontalLoc);
           this.renderController.updateBoard();
-          this.audioController.playRandomAudio("attack");
         }
       });
     });
@@ -480,6 +488,11 @@ class RenderController {
     this.bestCoords;
     this.showProbabilityMap = true;
     this.showTargets = true;
+  }
+
+  updateTextDisplay(text) {
+    const textDisplay = document.getElementById("text-display");
+    textDisplay.textContent = text;
   }
 
   togglePlacedShipHover(toggleOn) {
@@ -574,6 +587,28 @@ class RenderController {
     targetImg.classList.add("target-img");
     targetImg.src = `src/assets/images/gameboard/target.png`;
     selectedCell.appendChild(targetImg);
+  }
+
+  toggleTargets(forceOff = false) {
+    const targetsBtn = document.getElementById("toggle-targets");
+    if (this.showTargets || forceOff) {
+      this.showTargets = false;
+      targetsBtn.textContent = "TARGETS: OFF";
+    } else {
+      this.showTargets = true;
+      targetsBtn.textContent = "TARGETS: ON";
+    }
+  }
+
+  toggleProbabilityMap(forceOff = false) {
+    const probabilityBtn = document.getElementById("toggle-probability");
+    if (this.showProbabilityMap || forceOff) {
+      this.showProbabilityMap = false;
+      probabilityBtn.textContent = "PROBABILITY MAP: OFF";
+    } else {
+      this.showProbabilityMap = true;
+      probabilityBtn.textContent = "PROBABILITY MAP: ON";
+    }
   }
 
   renderProbabilityMap(bestLoc) {
@@ -692,6 +727,8 @@ class RenderController {
         });
       });
     });
+
+    this.togglePlacedShipHover(false);
   }
 
   updateCellShowShip(cell, cellIndex, boardId) {
