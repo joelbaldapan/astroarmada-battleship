@@ -21,12 +21,6 @@
     </header>
 
     <main>
-      <div id="toggle-options">
-        <button id="toggle-music">MUSIC: ON</button>
-        <button id="toggle-probability">PROBABILITY MAP: ON</button>
-        <button id="toggle-targets">TARGETS: ON</button>
-      </div>
-
       <div id="full-game-container">
         <div id="gameboard-container">
           <!-- Gameboards will be inserted here by JavaScript -->
@@ -62,21 +56,27 @@
           </div>
         </div>
       </div>
+
+      <h2 id="text-display">Press Start to engage your offenses!</h2>
+
+      <div id="toggle-options">
+        <button id="toggle-music">MUSIC: ON</button>
+        <button id="toggle-probability">PROBABILITY MAP: ON</button>
+        <button id="toggle-targets">TARGETS: ON</button>
+      </div>
+
+      <div id="start-container">
+        <select id="difficulty-select">
+          <option class="difficulty-option" value="0">🌍 Easy</option>
+          <option class="difficulty-option" value="1">🛰️ Normal</option>
+          <option class="difficulty-option" value="2">🪐 Hard</option>
+          <option class="difficulty-option" value="3" selected="selected">
+            🌌 Extreme
+          </option>
+        </select>
+        <button id="start-btn">START GAME</button>
+      </div>
     </main>
-
-    <h2 id="text-display">Press Start to engage your offenses!</h2>
-
-    <div id="start-container">
-      <select id="difficulty-select">
-        <option class="difficulty-option" value="0">🌍 Easy</option>
-        <option class="difficulty-option" value="1">🛰️ Normal</option>
-        <option class="difficulty-option" value="2">🪐 Hard</option>
-        <option class="difficulty-option" value="3" selected="selected">
-          🌌 Extreme
-        </option>
-      </select>
-      <button id="start-btn">START GAME</button>
-    </div>
 
     <footer>
       <h3>Footer</h3>

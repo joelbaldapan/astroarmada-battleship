@@ -33,6 +33,7 @@ class GameController {
     this.human.gameboard.resetBoard(this.height, this.length);
     this.computer.gameboard.resetBoard(this.height, this.length);
     this.renderController.deleteRenderBoards();
+    this.renderController.toggleExtremeAISettings(false);
     this.renderController.toggleDifficultySelect(true);
     this.renderController.renderBoard("human");
     this.renderController.togglePlacedShipHover(true);
@@ -52,6 +53,7 @@ class GameController {
     this.renderController.updateTextDisplay(
       "Admiral, seek and destroy all the enemy's battleships!"
     );
+    if (difficulty === "3") this.renderController.toggleExtremeAISettings(true);
     this.prepareAttackPlayer();
   }
 
@@ -599,6 +601,19 @@ class RenderController {
       );
       shipElement.classList.add("ship-placed");
     });
+  }
+
+  toggleExtremeAISettings(toggleOn) {
+    const probabilityToggle = document.getElementById("toggle-probability");
+    const targetsToggle = document.getElementById("toggle-targets");
+
+    if (toggleOn) {
+      probabilityToggle.style.display = "block";
+      targetsToggle.style.display = "block";
+    } else {
+      probabilityToggle.style.display = "none";
+      targetsToggle.style.display = "none";
+    }
   }
 
   toggleDifficultySelect(toggleOn) {
