@@ -28,7 +28,7 @@ class GameController {
   restartGame() {
     this.gameStarted = false;
     this.compChoice;
-    this.wonGame;
+    this.wonGame = undefined;
     this.human.gameboard.resetBoard(this.height, this.length);
     this.computer.gameboard.resetBoard(this.height, this.length);
     this.renderController.deleteRenderBoards();
@@ -40,12 +40,13 @@ class GameController {
 
   initializeGame() {
     this.gameStarted = true;
+    this.wonGame = undefined;
     this.computer.initializeAIBoard();
     this.human.probabilityAI.resetShipLengths();
     this.renderController.togglePlacedShipHover(false);
     this.renderController.renderStartBtn("RESTART GAME");
     this.renderController.updateTextDisplay(
-      "Commander, seek and destroy all the enemy's battleships!"
+      "Admiral, seek and destroy all the enemy's battleships!"
     );
     this.prepareAttackPlayer();
   }
@@ -57,6 +58,7 @@ class GameController {
     if (this.wonGame) {
       this.renderController.toggleTargets(true);
       this.renderController.toggleProbabilityMap(true);
+      this.renderController.updateProbabilityTargets();
     }
     if (this.wonGame === "human")
       this.renderController.updateTextDisplay(
@@ -70,6 +72,8 @@ class GameController {
 
   attackComputer(verticalLoc, horizontalLoc) {
     if (this.wonGame) return; // If game ended, then don't do anything
+
+    console.log(verticalLoc, horizontalLoc);
 
     if (!this.computer.gameboard.validAttack(verticalLoc, horizontalLoc))
       return;
@@ -472,7 +476,6 @@ class EventController {
         const cellIndex = parseInt(cell.id.substring(5));
         const verticalLoc = Math.floor(cellIndex / this.length);
         const horizontalLoc = cellIndex % this.length;
-        console.log(verticalLoc, horizontalLoc);
         this.gameController.attackComputer(verticalLoc, horizontalLoc);
         this.renderController.updateBoard();
       });
