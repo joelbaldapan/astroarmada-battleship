@@ -304,6 +304,8 @@ class EventController {
     this.probabilityBtn = document.getElementById("toggle-probability");
     this.targetsBtn = document.getElementById("toggle-targets");
     this.difficultySelect = document.getElementById("difficulty-select");
+    this.detailsAccordion = document.querySelectorAll(".details");
+
     this.recentlyPlacedShip = false;
 
     // Controllers
@@ -351,6 +353,12 @@ class EventController {
         this.audioController.toggleBGMusic(this.bgMusic, this.musicBtn);
         musicLoaded = true;
       }
+    });
+
+    this.detailsAccordion.forEach((item) => {
+      item.addEventListener("click", () => {
+        item.classList.toggle("active");
+      });
     });
 
     this.probabilityBtn.addEventListener("click", () => {

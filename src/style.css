@@ -10,6 +10,12 @@
     format("opentype");
 }
 
+@font-face {
+  font-family: "AlvinusPixel";
+  src: url(../src/assets/fonts/AlvinusPixelDemoRegular-pg9od.otf)
+    format("opentype");
+}
+
 :root {
   --w-header: #09032b;
   --w-background: #040115;
@@ -21,6 +27,7 @@
     rgba(9, 3, 43, 1) 100%
   );
   --w-text: #dee8f4;
+  --w-text-highlight: #9e7cf3;
 
   --board-background: #080227;
   --board-highlighted: #3c1fca;
@@ -40,8 +47,9 @@
   --button-disabled: #15063b;
   --button-start-background: #10052e;
 
-  --font-header: "AldercyPixel", serif;
-  --font-text: "NapzerPixel", serif;
+  --font-emphasize: "AldercyPixel", serif;
+  --font-strong: "AlvinusPixel", serif;
+  --font-normal: "NapzerPixel", serif;
 
   --board-size: min(40vw, 420px);
   --board-size-small: 70vw;
@@ -57,7 +65,7 @@ html,
 body {
   width: 100%;
   color: var(--w-text);
-  font-family: var(--font-text);
+  font-family: var(--font-normal);
 }
 
 body {
@@ -83,7 +91,7 @@ main {
 
 h1 {
   font-size: min(3.2rem, 5vw);
-  font-family: var(--font-header);
+  font-family: var(--font-emphasize);
   line-height: 0.8;
   text-align: center;
 }
@@ -116,7 +124,7 @@ footer {
 }
 
 .label {
-  font-family: var(--font-header);
+  font-family: var(--font-emphasize);
   font-size: 2.3rem;
   text-align: center;
   margin-bottom: 0.2rem;
@@ -151,6 +159,7 @@ button:active {
   margin: 1rem 3rem 0.5rem;
   font-size: 1.5rem;
   text-align: center;
+  font-weight: 400;
 }
 
 #start-container {
@@ -171,7 +180,7 @@ button:active {
 
 #start-btn {
   font-size: 1.5rem;
-  font-family: var(--font-header);
+  font-family: var(--font-emphasize);
   background-color: var(--button-start-bg-color);
   padding: 1rem 2rem;
   color: var(--w-text);
@@ -183,7 +192,7 @@ button:active {
 
 #difficulty-select {
   font-size: calc(var(--t-size-button) * 1.5);
-  font-family: var(--font-header);
+  font-family: var(--font-emphasize);
   background-color: var(--button-start-bg-color);
   padding: 1rem 1.5rem;
   color: var(--w-text);
@@ -195,7 +204,7 @@ button:active {
 
 #rotate-btn {
   font-size: var(--t-size-button);
-  font-family: var(--font-header);
+  font-family: var(--font-emphasize);
   background-color: var(--button-toggles-bg-color);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
@@ -207,7 +216,7 @@ button:active {
 
 #toggle-probability {
   font-size: var(--t-size-button);
-  font-family: var(--font-header);
+  font-family: var(--font-emphasize);
   background-color: var(--button-toggles-bg-color);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
@@ -220,7 +229,7 @@ button:active {
 
 #toggle-targets {
   font-size: var(--t-size-button);
-  font-family: var(--font-header);
+  font-family: var(--font-emphasize);
   background-color: var(--button-toggles-bg-color);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
@@ -233,7 +242,7 @@ button:active {
 
 #toggle-music {
   font-size: var(--t-size-button);
-  font-family: var(--font-header);
+  font-family: var(--font-emphasize);
   background-color: var(--button-music-bg-color);
   padding: 0.5rem 1.5rem;
   color: var(--w-text);
@@ -242,6 +251,84 @@ button:active {
   outline: none;
   border: 0.2rem solid var(--board-outline);
   border-radius: 3rem;
+}
+
+/* ------- */
+/* DETAILS */
+/* ------- */
+#details-container {
+  padding-top: 2rem;
+}
+
+.details {
+  width: 75vw;
+  cursor: pointer;
+  padding: 1rem 0;
+  border-bottom: 0.2rem solid var(--board-outline);
+}
+
+#about-intro {
+  margin: 30vh 0 5vw;
+  text-align: center;
+  font-family: var(--font-main);
+  font-weight: 600;
+  font-size: min(6vw, 3rem);
+  color: var(--w-text);
+  line-height: 2rem;
+}
+
+.about-title {
+  font-family: var(--font-strong);
+  font-size: 2rem;
+  font-weight: 500;
+  color: var(--w-text);
+  padding-left: 1.5vw;
+  line-height: 2rem;
+  padding: 0.2rem 0;
+}
+
+.about-title:hover {
+  color: var(--w-text-highlight);
+}
+
+ul {
+  padding: 0 5vw;
+}
+
+li::marker {
+  font-family: var(--font-normal);
+}
+
+.second-li {
+  padding-left: 0rem;
+}
+
+strong {
+  font-weight: 100;
+  font-size: 1.5rem;
+  font-family: var(--font-strong);
+  color: var(--w-text);
+  text-align: justify;
+}
+
+li {
+  font-family: var(--font-normal);
+  font-size: 1.5rem;
+  font-weight: 300;
+  color: var(--w-text);
+  text-align: justify;
+  padding-bottom: 2vh;
+}
+
+.about-content {
+  max-height: 0;
+  transition: max-height 1s ease-out;
+  overflow: hidden;
+}
+
+.details.active .about-content {
+  transition: padding-top max-height 0.7s ease-in;
+  max-height: 200vh;
 }
 
 .gameboard {
@@ -456,9 +543,13 @@ button:active {
     height: 15rem;
   }
 
+  main {
+    padding: 0rem 0;
+  }
+
   h1 {
     font-size: 3.5rem;
-    font-family: var(--font-header);
+    font-family: var(--font-emphasize);
     line-height: 0.8;
     text-align: center;
   }

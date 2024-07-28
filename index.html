@@ -76,6 +76,140 @@
         </select>
         <button id="start-btn">START GAME</button>
       </div>
+
+      <div id="details-container">
+        <section class="details">
+          <h3 class="about-title">> About the Difficulties</h3>
+          <div class="about-content">
+            <ul>
+              <li>
+                <strong>Easy AI (Random)</strong><br />
+                Uses purely random attacks without any strategy. Simply picks
+                spots randomly on the board, regardless of previous hits or
+                misses.
+              </li>
+              <li>
+                <strong>Normal AI (Adjacent)</strong><br />
+                Starts with random attacks. After scoring a hit, it enters
+                "adjacent mode," focusing subsequent attacks on neighboring
+                cells to find the rest of the ship.
+              </li>
+              <li>
+                <strong>Hard AI (Checkerboard)</strong><br />
+                Attacks in a checkerboard pattern, ensuring no ship can hide in
+                the gaps. Once it hits a ship, it switches to adjacent targeting
+                for more precise attacks.
+              </li>
+              <li>
+                <strong>Extreme AI (Probability Map)</strong><br />
+                Creates a probability map of likely ship locations based on
+                remaining ships, previous hits, and possible ship placements.
+                Attacks the highest probability spots, making it the most
+                strategic AI.
+              </li>
+            </ul>
+          </div>
+        </section>
+
+        <section class="details">
+          <h3 class="about-title">> "Probability Map" and "Targets" Toggles</h3>
+          <div class="about-content">
+            <ul>
+              <li>
+                The <strong>"Probability Map"</strong> and
+                <strong>"Target"</strong> toggles appear during a game with
+                Extreme AI. They are used to
+                <strong>visually show how the AI thinks.</strong>
+              </li>
+            </ul>
+            <ol>
+              <li>
+                <strong>Probability Map Toggle</strong><br />
+                This visually displays a
+                <strong>heatmap of the probability values</strong> in the
+                gameboard. The brighter the cell, the more likely a ship is
+                occupying it. The darker the cell, the less likely a ship is
+                present.
+              </li>
+
+              <li>
+                <strong>Targets Toggle</strong><br />
+                This visually displays the cells that the AI
+                <strong>plans to attack</strong> on the next moves. These cells
+                have the highest values on the probability map, and therefore
+                have the highest likelihood a ship may occupy it.
+              </li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="details">
+          <h3 class="about-title">> How the Extreme AI works</h3>
+          <div class="about-content">
+            <ul>
+              <li>
+                The Extreme AI targeting in this Battleship game uses a
+                <strong>probability map</strong> to make informed decisions.
+                This is how it works:
+              </li>
+            </ul>
+            <ol>
+              <li>
+                <strong>Reset Probability Map</strong><br />
+                Create a "probabilty" property for each cell. Then, set the
+                probability of all cells on the board to zero.
+              </li>
+
+              <li>
+                <strong>Update Probability Map</strong><br />When updating the
+                probability map, the AI uses two techniques to maximize its
+                chances to destroy a ship.
+                <ul>
+                  <li class="second-li">
+                    <strong>Default Mode</strong><br />
+                    This mode is triggered by default. The AI finds *every
+                    possible* spot a ship could have been placed on. For each
+                    remaining ship length, it considers both horizontal and
+                    vertical placements across the entire board. If a ship can
+                    legally fit (without overlapping known hits or extending off
+                    the board), the AI increments the probability value for all
+                    cells that ship would have occupied. This creates a heat map
+                    of likely ship locations based on the current game state.
+                  </li>
+
+                  <li class="second-li">
+                    <strong>Adjacent Mode</strong><br />This mode is triggered
+                    when the AI identifies a hit on a ship that hasn't been
+                    sunk. In this mode, the AI prioritizes targeting cells
+                    adjacent to the known hits to maximize the chances of
+                    completing the sinking of the ship. The AI evaluates both
+                    horizontal and vertical placements around the hit cells,
+                    updating a probability map to reflect higher probabilities
+                    for these adjacent cells. This focused approach allows the
+                    AI to efficiently target and sink ships by concentrating
+                    attacks around already damaged areas, increasing the
+                    likelihood of successful hits.
+                  </li>
+                </ul>
+              </li>
+
+              <li>
+                <strong>Select Highest Probability</strong><br />
+                The AI scans the entire probability map and selects the cell
+                with the highest probability as its target. If multiple cells
+                tie for the highest probability, it randomly chooses among them.
+              </li>
+
+              <li>
+                <strong>Repeat the Process</strong><br />
+                The AI repeats these steps until all ships have been destroyed.
+                By following this approach, the AI can make smart, educated
+                guesses about the locations that may most likely have a ship.
+              </li>
+            </ol>
+          </div>
+        </section>
+      </div>
     </main>
 
     <footer>
