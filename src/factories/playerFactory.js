@@ -31,8 +31,7 @@ class Player {
   // For AI
   decideAI(difficulty) {
     // Random AI (BABY) -- Random | No adjacent mode
-
-    if (difficulty === "easy") {
+    if (difficulty === "0") {
       return this.randomDecide();
     }
 
@@ -41,20 +40,20 @@ class Player {
     }
 
     // Choose Adjacent AI (NORMAL) -- Random | Has adjacent mode
-    if (difficulty === "medium") {
+    if (difficulty === "1") {
       return this.randomDecide();
     }
 
     // Checkerboard AI (HARD) -- Checkerboard | Has adjacent mode
-    if (difficulty === "hard") {
+    if (difficulty === "2") {
       const location = this.randomDecide();
       // If even, then it is valid
       if ((location[0] + location[1]) % 2 === 0) return location;
-      return this.decideAI("hard");
+      return this.decideAI("2");
     }
 
     // Probability Map AI (EXTREME) -- Calculate proba map | Has adjacent mode
-    if (difficulty === "extreme") {
+    if (difficulty === "3") {
       return this.probabilityAI.probabilityDecide("extreme");
     }
   }

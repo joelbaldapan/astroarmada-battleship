@@ -7,6 +7,7 @@ class GameController {
     this.allShips = allShips;
     this.human = new Player("human", this, this.allShips);
     this.computer = new Player("computer", this, this.allShips);
+    this.AIdifficulty;
     this.compChoice;
     this.gameStarted = false;
     this.wonGame;
@@ -32,17 +33,20 @@ class GameController {
     this.human.gameboard.resetBoard(this.height, this.length);
     this.computer.gameboard.resetBoard(this.height, this.length);
     this.renderController.deleteRenderBoards();
+    this.renderController.toggleDifficultySelect(true);
     this.renderController.renderBoard("human");
     this.renderController.togglePlacedShipHover(true);
     this.renderController.renderStartBtn("START GAME");
     this.checkCompletePlacedShips();
   }
 
-  initializeGame() {
+  initializeGame(difficulty) {
     this.gameStarted = true;
+    this.AIdifficulty = difficulty;
     this.wonGame = undefined;
     this.computer.initializeAIBoard();
     this.human.probabilityAI.resetShipLengths();
+    this.renderController.toggleDifficultySelect(false);
     this.renderController.togglePlacedShipHover(false);
     this.renderController.renderStartBtn("RESTART GAME");
     this.renderController.updateTextDisplay(
@@ -64,16 +68,17 @@ class GameController {
       this.renderController.updateTextDisplay(
         "Mission accomplished, admiral. Your fleet reigns supreme across the galaxy..!"
       );
-    if (this.wonGame === "computer")
+    if (this.wonGame === "computer") {
       this.renderController.updateTextDisplay(
         "Tough break, admiral. Your fleet drifts defeated in the cosmic winds..."
       );
+      this.renderController.sinkAllShips();
+      this.renderController.updateBoard();
+    }
   }
 
   attackComputer(verticalLoc, horizontalLoc) {
     if (this.wonGame) return; // If game ended, then don't do anything
-
-    console.log(verticalLoc, horizontalLoc);
 
     if (!this.computer.gameboard.validAttack(verticalLoc, horizontalLoc))
       return;
@@ -90,8 +95,9 @@ class GameController {
   }
 
   prepareAttackPlayer() {
-    this.compChoice = this.human.decideAI("extreme"); // adjustable
-    this.renderController.renderProbabilityMap(this.compChoice);
+    this.compChoice = this.human.decideAI(this.AIdifficulty); // adjustable
+    if (this.AIdifficulty === "3")
+      this.renderController.renderProbabilityMap(this.compChoice);
   }
 
   attackPlayer() {
@@ -119,7 +125,6 @@ class GameController {
 
   checkCompletePlacedShips() {
     const shipsPlaced = this.human.gameboard.shipsPlaced;
-    console.log(shipsPlaced.length, this.allShips.length);
     const startBtn = document.getElementById("start-btn");
     if (shipsPlaced.length === this.allShips.length) {
       startBtn.disabled = false;
@@ -296,6 +301,7 @@ class EventController {
     this.settings = document.getElementById("settings");
     this.probabilityBtn = document.getElementById("toggle-probability");
     this.targetsBtn = document.getElementById("toggle-targets");
+    this.difficultySelect = document.getElementById("difficulty-select");
     this.recentlyPlacedShip = false;
 
     // Controllers
@@ -363,10 +369,9 @@ class EventController {
         this.renderController.renderBoard("computer");
         this.computerCells = document.querySelectorAll("#computer-board .cell");
         this.computerCellsArr = [...this.computerCells];
-        console.log(this.computerCellsArr);
         this.setupComputerCellListeners();
 
-        this.gameController.initializeGame();
+        this.gameController.initializeGame(this.difficultySelect.value);
         this.initializeController.toggleSelectedShip(null);
         this.renderController.toggleSettingsDisplay(true);
         this.renderController.updateBoard();
@@ -579,9 +584,6 @@ class RenderController {
     const shipsPlaced = this.gameController.human.gameboard.shipsPlaced;
     const allShips = this.gameController.allShips;
 
-    console.log(shipsPlaced);
-    console.log(allShips);
-
     // Remove all ship-placed class
     allShips.forEach((ship) => {
       const shipElement = document.getElementById(
@@ -597,6 +599,16 @@ class RenderController {
       );
       shipElement.classList.add("ship-placed");
     });
+  }
+
+  toggleDifficultySelect(toggleOn) {
+    const settingsContainer = document.getElementById("difficulty-select");
+
+    if (toggleOn) {
+      settingsContainer.style.display = "flex";
+    } else {
+      settingsContainer.style.display = "none";
+    }
   }
 
   toggleSettingsDisplay(toggleOn) {
@@ -788,6 +800,17 @@ class RenderController {
           this.updateCellShowShip(cell, cellIndex, boardId);
           cellIndex++;
         });
+      });
+    });
+  }
+
+  sinkAllShips() {
+    this.gameController.computer.gameboard.coordinates.forEach((row) => {
+      row.forEach((cell) => {
+        if (cell.hasShip) {
+          cell.hasHit = true;
+          cell.hasShip.sunk = true;
+        }
       });
     });
   }

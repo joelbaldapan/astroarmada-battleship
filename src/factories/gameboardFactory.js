@@ -50,7 +50,6 @@ class Gameboard {
     const isAlreadyPlaced = this.shipsPlaced.some(
       (ship) => ship.length === length && ship.variant === variant
     );
-    console.log(isAlreadyPlaced);
     if (!isAlreadyPlaced)
       this.shipsPlaced.push({ length: ship.length, variant: variant });
 

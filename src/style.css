@@ -26,6 +26,7 @@
 
   --b-bg-color: #3e10b3;
   --b-disabled: #15063b;
+  --b-start-background: #10052e;
 
   --font-header: "AldercyPixel", serif;
   --font-text: "NapzerPixel", serif;
@@ -109,11 +110,38 @@ button:active {
   text-align: center;
 }
 
+#start-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+
+  background-color: var(--b-start-background);
+  padding: 0.5rem 2rem;
+  outline: none;
+  border: 0.2rem solid var(--board-outline);
+  border-radius: 3rem;
+}
+
 #start-btn {
   font-size: 1.5rem;
   font-family: var(--font-header);
   background-color: var(--b-bg-color);
-  padding: 1rem 3rem;
+  padding: 1rem 2rem;
+  color: var(--w-text);
+
+  outline: none;
+  border: 0.2rem solid var(--board-outline);
+  border-radius: 3rem;
+}
+
+#difficulty-select {
+  font-size: calc(var(--t-size-button) * 1.5);
+  font-family: var(--font-header);
+  background-color: var(--b-bg-color);
+  padding: 1rem 1.5rem;
   color: var(--w-text);
 
   outline: none;
