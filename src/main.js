@@ -543,8 +543,8 @@ class RenderController {
   constructor(gameController) {
     this.gameController = gameController;
     this.bestCoords;
-    this.showProbabilityMap = true;
-    this.showTargets = true;
+    this.showProbabilityMap = false;
+    this.showTargets = false;
   }
 
   deleteRenderBoards() {
