@@ -268,11 +268,11 @@ button:active {
 }
 
 #about-intro {
-  margin: 30vh 0 5vw;
+  margin: 3rem 0 1rem;
   text-align: center;
-  font-family: var(--font-main);
+  font-family: var(--font-strong);
   font-weight: 600;
-  font-size: min(6vw, 3rem);
+  font-size: 2.5rem;
   color: var(--w-text);
   line-height: 2rem;
 }
