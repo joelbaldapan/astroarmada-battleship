@@ -66,14 +66,18 @@ class GameController {
       this.renderController.toggleProbabilityMap(true);
       this.renderController.updateProbabilityTargets();
     }
-    if (this.wonGame === "human")
+    if (this.wonGame === "human") {
       this.renderController.updateTextDisplay(
         "Mission accomplished, admiral. Your fleet reigns supreme across the galaxy..!"
       );
+      this.audioController.playAudio("win", 0.9);
+    }
+
     if (this.wonGame === "computer") {
       this.renderController.updateTextDisplay(
         "Tough break, admiral. Your fleet drifts defeated in the cosmic winds..."
       );
+      this.audioController.playAudio("lose", 0.9);
       this.renderController.sinkAllShips();
       this.renderController.updateBoard();
     }
@@ -106,7 +110,7 @@ class GameController {
     this.human.gameboard.receiveAttack(this.compChoice[0], this.compChoice[1]);
     this.human.probabilityAI.checkAdjacentMode();
     this.human.probabilityAI.checkSunkShip(this.compChoice);
-    this.audioController.playRandomAudio("attack");
+    this.audioController.playRandomAudio("attack", 0.5);
     this.renderController.updateBoard();
     this.checkLose();
 
@@ -241,7 +245,7 @@ class InitializeController {
       this.toggleSelectedShip(null);
       this.gameController.checkCompletePlacedShips();
       this.renderController.updateBoard();
-      this.audioController.playAudio("deploy", 0.8);
+      this.audioController.playAudio("deploy", 1);
     }
   }
 
@@ -279,7 +283,7 @@ class InitializeController {
       this.renderController.updateShipSettings();
 
       // Play a sound effect if needed
-      this.audioController.playAudio("select", 0.8);
+      this.audioController.playAudio("select", 0.7);
     }
   }
 }
@@ -385,7 +389,7 @@ class EventController {
         this.initializeController.toggleSelectedShip(null);
         this.renderController.toggleSettingsDisplay(true);
         this.renderController.updateBoard();
-        this.audioController.playAudio("startgame");
+        this.audioController.playAudio("startgame", 1);
       } else {
         // RESTART GAME
         this.gameController.restartGame(this.height, this.length);
@@ -393,7 +397,7 @@ class EventController {
         this.initializeController.toggleSelectedShip(null);
         this.renderController.updateShipSettings();
         this.renderController.toggleSettingsDisplay(false);
-        this.audioController.playAudio("startgame");
+        this.audioController.playAudio("resetgame", 1);
       }
     });
 
@@ -405,7 +409,7 @@ class EventController {
     this.shipSettingsBtnsArr.forEach((shipSetting) => {
       shipSetting.addEventListener("click", () => {
         this.initializeController.toggleSelectedShip(shipSetting);
-        this.audioController.playAudio("select", 0.8);
+        this.audioController.playAudio("select", 0.6);
       });
 
       shipSetting.addEventListener("mouseenter", () => {
@@ -520,10 +524,11 @@ class AudioController {
     }
   }
 
-  playRandomAudio(name) {
+  playRandomAudio(name, volume = 1) {
     const sound = new Audio();
     const number = this.getRandomNumber(4);
     sound.src = `src/assets/audio/${name}/${name}-${number}.mp3`;
+    sound.volume = volume;
     sound.play();
   }
 
