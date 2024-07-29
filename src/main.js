@@ -54,6 +54,8 @@ class GameController {
       "Admiral, seek and destroy all the enemy's battleships!"
     );
     if (difficulty === "3") this.renderController.toggleExtremeAISettings(true);
+    this.human.probabilityAI.checkAdjacentMode();
+    console.log(this.human.gameboard.coordinates);
     this.prepareAttackPlayer();
   }
 
