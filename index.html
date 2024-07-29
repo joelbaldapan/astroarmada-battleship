@@ -180,16 +180,15 @@
 
                   <li class="second-li">
                     <strong>Adjacent Mode</strong><br />This mode is triggered
-                    when the AI identifies a hit on a ship that hasn't been
-                    sunk. In this mode, the AI prioritizes targeting cells
-                    adjacent to the known hits to maximize the chances of
-                    completing the sinking of the ship. The AI evaluates both
-                    horizontal and vertical placements around the hit cells,
-                    updating a probability map to reflect higher probabilities
-                    for these adjacent cells. This focused approach allows the
-                    AI to efficiently target and sink ships by concentrating
-                    attacks around already damaged areas, increasing the
-                    likelihood of successful hits.
+                    when the AI identifies a hit on an unsunk ship. In this
+                    mode, it targets cells that are adjacent to cells with known
+                    successful hits. The AI evaluates both horizontal and
+                    vertical placements around the hit cells, updating the
+                    probability map to reflect higher probabilities for these
+                    adjacent cells. This focused approach allows the AI to
+                    efficiently target and sink ships by concentrating attacks
+                    around already damaged areas, increasing the likelihood of
+                    successful hits.
                   </li>
                 </ul>
               </li>
